@@ -139,7 +139,7 @@
       <p class="lede">Send your dates and we'll reply with the price and availability within a few hours.</p>
       <div class="contact-grid">
         <ul class="contact-list">
-          <li><span>Support email</span><a data-email href="#"></a></li>
+          <li><span>Email</span><a data-email href="#"></a></li>
           <li><span>Phone & WhatsApp</span><a data-phone href="#"></a></li>
           <li><span>Instagram</span><a data-insta href="#" target="_blank" rel="noopener"></a></li>
           <li><span>Based in</span><b>Wai, Satara district, Maharashtra</b></li>
@@ -151,6 +151,18 @@
             <label>Phone<input name="phone" type="tel" required autocomplete="tel"></label>
           </div>
           <label>Package<select name="package" id="pkgSelect"></select></label>
+          <label>Hotel required
+            <select name="hotel" required>
+              <option value="">Choose hotel type</option>
+              <option>Budget</option>
+              <option>Hostel</option>
+              <option>2 star</option>
+              <option>3 star</option>
+              <option>4 star</option>
+              <option>5 star</option>
+              <option>No hotel needed (day trip)</option>
+            </select>
+          </label>
           <div class="row">
             <label>Travel date<input name="date" type="date"></label>
             <label>Number of people<input name="people" type="number" min="1" max="17" value="2"></label>
@@ -165,6 +177,8 @@
             </select>
           </label>
           <label>Anything we should know?<textarea name="notes" placeholder="Pickup point, medical needs, special occasion…"></textarea></label>
+          <label class="check-terms"><input type="checkbox" name="terms" id="terms" required>
+            <span>I have read and accept the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions, Code of Conduct and Cancellation Policy</a>.</span></label>
           <button type="submit" class="btn">Send enquiry</button>
           <p class="form-msg" id="formMsg" role="status"></p>
         </form>
@@ -176,7 +190,7 @@
 <footer>
   <div class="wrap">
     <span>© <span class="yr"></span> Visit Wai, Wai, Maharashtra</span>
-    <nav aria-label="Footer"><ul><li><a href="packages.html">Packages</a></li><li><a href="places.html">Places to visit</a></li><li><a data-email data-keep href="#">Email us</a></li></ul></nav>
+    <nav aria-label="Footer"><ul><li><a href="packages.html">Packages</a></li><li><a href="places.html">Places to visit</a></li><li><a href="terms.html">Terms &amp; Conditions</a></li><li><a href="terms.html#cancellation">Cancellation policy</a></li><li><a data-email data-keep href="#">Email us</a></li></ul></nav>
   </div>
 </footer>
 
@@ -194,6 +208,7 @@
       const a = document.createElement('article');
       a.className = 'pkg' + (g === 'special' ? ' special' : '');
       a.innerHTML = `<span class="who"></span><h3></h3><p></p>
+        ${p.cardNote ? '<p class="card-note"></p>' : ''}
         <dl><dt>Stay</dt><dd class="s"></dd><dt>Walking</dt><dd class="w"></dd></dl>
         <div class="card-actions">
           <a class="btn small-btn" href="#contact" data-pkg="${p.id}">Enquire</a>
@@ -202,6 +217,7 @@
       a.querySelector('.who').textContent = g === 'special' ? 'Special package' : `For ${p.category.toLowerCase()}`;
       a.querySelector('h3').textContent = p.name;
       a.querySelector('p').textContent = p.summary;
+      if (p.cardNote) a.querySelector('.card-note').textContent = p.cardNote;
       a.querySelector('.s').textContent = p.stay;
       a.querySelector('.w').textContent = p.walking;
       grid.appendChild(a);
@@ -226,8 +242,10 @@
     if (!f.name.value.trim() || !f.phone.value.trim()) {
       msg.textContent = 'Add your name and phone number so we can reply.'; return;
     }
+    if (!f.hotel.value) { msg.textContent = 'Choose the hotel type you need.'; f.hotel.focus(); return; }
+    if (!f.terms.checked) { msg.textContent = 'Please tick the box to accept the Terms & Conditions before sending.'; f.terms.focus(); return; }
     const pkgText = sel.options[sel.selectedIndex].text;
-    const body = `Name: ${f.name.value}\nPhone: ${f.phone.value}\nPackage: ${pkgText}\nDate: ${f.date.value || 'Not decided'}\nPeople: ${f.people.value}\nFood: ${f.food.value}\nNotes: ${f.notes.value}`;
+    const body = `Name: ${f.name.value}\nPhone: ${f.phone.value}\nPackage: ${pkgText}\nHotel: ${f.hotel.value}\nDate: ${f.date.value || 'Not decided'}\nPeople: ${f.people.value}\nFood: ${f.food.value}\nNotes: ${f.notes.value}\nTerms & Conditions accepted: Yes`;
     location.href = `mailto:${SITE.email}?subject=${encodeURIComponent('Trip enquiry: ' + pkgText)}&body=${encodeURIComponent(body)}`;
     msg.textContent = 'Your email app is opening with the enquiry filled in. Press send there.';
   });

@@ -23,6 +23,8 @@ const PACKAGES = [
     name: "Hills for Two",
     summary: "A private 2-day trip for couples with a verified driver, a couple-friendly hotel, sunset at Bombay Point and an optional Wilson Point sunrise.",
     stay: "1 night, couple-friendly hotel in Mahabaleshwar", walking: "Moderate", bestFor: "Couples, honeymooners",
+    cardNote: "Travelling solo? The couple package price stays the same for one person, because the car, driver and room are the same.",
+    notes: ["Travelling solo? The couple package price stays the same for one person, because the car, driver and room are the same."],
     days: [
       { title: "Day 1: Wai → Panchgani → Mahabaleshwar", stops: [
         ["8:00 am", "Dholya Ganpati, Wai", "Darshan and photos on the Krishna ghat"],
@@ -146,6 +148,8 @@ const PACKAGES = [
     name: "Slow Hills for Two",
     summary: "Three relaxed days: Wai's ghats and Dhom Dam, the art and book villages of Panchgani, then a sunrise and a lake day at Tapola.",
     stay: "1 night Panchgani, 1 night Mahabaleshwar", walking: "Moderate", bestFor: "Couples wanting slower days",
+    cardNote: "Travelling solo? The couple package price stays the same for one person, because the car, driver and room are the same.",
+    notes: ["Travelling solo? The couple package price stays the same for one person, because the car, driver and room are the same."],
     days: [
       { title: "Day 1: Wai heritage → Dhom → Panchgani", stops: [
         ["9:00 am", "Dholya Ganpati & Kashi Vishweshwar, Wai", "Darshan on the ghat"],

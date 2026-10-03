@@ -209,3 +209,16 @@ footer nav a{color:#E7EFE9}
   .day-table td:last-child{color:var(--soft);font-size:.95rem}
   .day-table td:last-child:empty{display:none}
 }
+
+/* enquiry terms checkbox and card note */
+.check-terms{display:flex;align-items:flex-start;gap:.6rem;font-weight:400}
+.check-terms input{width:1.15rem;height:1.15rem;margin-top:.25rem;flex:none;accent-color:var(--berry)}
+.check-terms a{color:var(--river)}
+.pkg .card-note{font-size:.92rem;background:var(--mist);color:var(--ink);border-radius:10px;padding:.5rem .75rem;margin-bottom:1rem}
+
+/* terms page */
+.terms-list{counter-reset:t;list-style:none;max-width:75ch}
+.terms-list li{counter-increment:t;position:relative;padding:.9rem 0 .9rem 2.75rem;border-bottom:1px solid var(--line)}
+.terms-list li::before{content:counter(t);position:absolute;left:0;top:.85rem;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--forest);color:#fff;font-weight:700;display:grid;place-items:center;font-size:.95rem}
+.terms-list b{display:block;color:var(--forest)}
+.terms-list p{color:var(--soft)}
