@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tour packages & itineraries | Visit Wai</title>
+<meta name="description" content="Hour-by-hour itineraries for Visit Wai's 2-day, 3-day, Ancient Wai and Scenic & Hidden Places packages, with travel times, activity prices and best seasons.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛰️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Mukta:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a href="index.html" class="logo">Visit Wai</a>
+    <nav id="nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="packages.html" aria-current="page">Packages</a></li>
+        <li><a href="places.html">Places to visit</a></li>
+        <li><a href="#fees">Activity prices</a></li>
+        <li><a href="#seasons">Best time to go</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="index.html#contact" class="btn">Book a trip</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="nav">☰</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero page-hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <h1 id="hero-title">Packages & itineraries</h1>
+      <p>Hour-by-hour plans for all 10 trips. Timings are approximate and adjust to traffic, weather and your pace.</p>
+    </div>
+    <svg class="ridges" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path class="r2" d="M0 60 L150 20 L290 55 L420 15 L560 50 L700 18 L840 55 L990 12 L1130 48 L1290 20 L1440 50 V120 H0Z"/>
+      <path class="r3" d="M0 90 L180 60 L340 85 L520 50 L700 82 L880 55 L1060 86 L1250 58 L1440 80 V120 H0Z"/>
+      <path class="r4" d="M0 110 C240 95 420 118 720 104 S1200 96 1440 108 V120 H0Z"/>
+    </svg>
+  </section>
+
+  <section aria-label="Itineraries" style="padding-top:3rem">
+    <div class="wrap">
+      <div class="filters" role="group" aria-label="Show packages">
+        <button class="chip" data-f="all" aria-pressed="true">All</button>
+        <button class="chip" data-f="2day" aria-pressed="false">2 days</button>
+        <button class="chip" data-f="3day" aria-pressed="false">3 days</button>
+        <button class="chip" data-f="Couples" aria-pressed="false">Couples</button>
+        <button class="chip" data-f="Families" aria-pressed="false">Families</button>
+        <button class="chip" data-f="Seniors" aria-pressed="false">Seniors</button>
+        <button class="chip" data-f="Groups" aria-pressed="false">Groups</button>
+        <button class="chip" data-f="special" aria-pressed="false">Special</button>
+      </div>
+      <div id="itins"></div>
+    </div>
+  </section>
+
+  <section id="times" class="alt" aria-labelledby="t-title">
+    <div class="wrap">
+      <h2 id="t-title">Travel times</h2>
+      <p class="lede">Approximate road distances at normal traffic. Weekends and monsoon can add 20–40%.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>From</th><th>To</th><th>Distance (km)</th><th>Drive time</th></tr></thead>
+          <tbody>
+            <tr><td>Wai</td><td>Menavali Ghat / Nana Phadnavis Wada</td><td>3</td><td>10 min</td></tr>
+            <tr><td>Wai</td><td>Wai Caves (Lohare)</td><td>7</td><td>15 min</td></tr>
+            <tr><td>Wai</td><td>Dhom Dam</td><td>10</td><td>20 min</td></tr>
+            <tr><td>Wai</td><td>Harrison's Folly</td><td>13</td><td>30 min</td></tr>
+            <tr><td>Wai</td><td>Panchgani (via Pasarni Ghat)</td><td>18</td><td>40 min</td></tr>
+            <tr><td>Wai</td><td>Balkawadi Dam / Borgaon</td><td>20</td><td>40 min</td></tr>
+            <tr><td>Wai</td><td>Mandhardev Kalubai temple</td><td>20</td><td>45 min (ghat)</td></tr>
+            <tr><td>Wai</td><td>Kaas Plateau (via Satara)</td><td>60</td><td>1 hr 45 min</td></tr>
+            <tr><td>Panchgani</td><td>Devrai Art Village</td><td>2</td><td>5 min</td></tr>
+            <tr><td>Panchgani</td><td>Bhilar Book Village</td><td>5</td><td>10 min</td></tr>
+            <tr><td>Panchgani</td><td>Rajpuri Caves</td><td>7</td><td>15 min</td></tr>
+            <tr><td>Panchgani</td><td>Mapro Garden (Gureghar)</td><td>10</td><td>20 min</td></tr>
+            <tr><td>Panchgani</td><td>Mahabaleshwar</td><td>19</td><td>40 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Venna Lake</td><td>2</td><td>5 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Wilson Point</td><td>2</td><td>5 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Old Mahabaleshwar temples</td><td>6</td><td>15 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Lingmala Waterfall</td><td>6</td><td>15 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Kate's Point / Needle Hole</td><td>7</td><td>20 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Arthur's Seat / Echo Point</td><td>12</td><td>30 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Pratapgad Fort</td><td>24</td><td>50 min</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Tapola</td><td>28</td><td>1 hr</td></tr>
+            <tr><td>Mahabaleshwar</td><td>Wai</td><td>35</td><td>1 hr 15 min</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="fees" aria-labelledby="f-title">
+    <div class="wrap">
+      <h2 id="f-title">Entry fees and activity prices</h2>
+      <p class="lede">Entry for the sightseeing on your itinerary is included. Activities are optional and paid at the venue. Prices are approximate and set by the operators, so they can change.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>In the package?</th><th>Approx. cost (₹)</th></tr></thead>
+          <tbody>
+            <tr><td>Panchgani & Mahabaleshwar municipal tourist tax</td><td class="yes">Included</td><td>20–50 per person</td></tr>
+            <tr><td>Parking at points and temples</td><td class="yes">Included</td><td>20–100 per vehicle</td></tr>
+            <tr><td>Viewpoint and forest entry (Arthur's Seat, Kate's Point, Lingmala etc.)</td><td class="yes">Included</td><td>10–50 per person</td></tr>
+            <tr><td>Harrison's Folly vehicle entry</td><td class="yes">Included</td><td>30–50 per car</td></tr>
+            <tr><td>Nana Phadnavis Wada</td><td class="yes">Included</td><td>50–100 per person</td></tr>
+            <tr><td>Wax Museum</td><td class="yes">Included where on itinerary</td><td>100–200 per person</td></tr>
+            <tr><td>Pratapgad Fort, Rajpuri Caves, temples</td><td class="yes">Included (mostly free)</td><td>0–30</td></tr>
+            <tr><td>Pandavgad trek local guide</td><td class="yes">Included (groups 3-day)</td><td>500–1,500 per group</td></tr>
+            <tr><td>Venna Lake boating</td><td class="no">Not included</td><td>300–600 per boat (30 min)</td></tr>
+            <tr><td>Dhom Dam boating / water sports</td><td class="no">Not included</td><td>200–1,000 per person</td></tr>
+            <tr><td>Tapola boating / kayaking</td><td class="no">Not included</td><td>300–800 per person</td></tr>
+            <tr><td>Horse, pony cart, camel rides</td><td class="no">Not included</td><td>100–500</td></tr>
+            <tr><td>Table Land go-karting</td><td class="no">Not included</td><td>200–400</td></tr>
+            <tr><td>Tandem paragliding (Panchgani)</td><td class="no">Not included</td><td>2,500–4,000 per person</td></tr>
+            <tr><td>On Wheelz / Velocity / Funtown</td><td class="no">Not included</td><td>500–1,500 per person</td></tr>
+            <tr><td>Strawberry picking</td><td class="no">Not included</td><td>Pay by weight</td></tr>
+            <tr><td>Devrai craft workshop</td><td class="no">Not included</td><td>Ask on site</td></tr>
+            <tr><td>Mapro Garden</td><td>Free entry</td><td>Food and products extra</td></tr>
+            <tr><td>Bhilar Book Village</td><td>Free</td><td>–</td></tr>
+            <tr><td>Kaas Plateau (add-on)</td><td class="no">Not included</td><td>About 100–150, book online</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="seasons" class="alt" aria-labelledby="s-title">
+    <div class="wrap">
+      <h2 id="s-title">Best time to go</h2>
+      <p class="lede">October to February is the easiest season for every package. In other months we adjust the stops.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Months</th><th>What to expect</th></tr></thead>
+          <tbody>
+            <tr><td><b>Oct–Feb</b></td><td>Clear views, the best sunrises and sunsets, paragliding open</td></tr>
+            <tr><td><b>Dec–Apr</b></td><td>Strawberry picking at Bhilar, Avkali and Gureghar; Mapro Strawberry Festival in spring</td></tr>
+            <tr><td><b>Mar–May</b></td><td>Warmer days and busy summer holidays; book early</td></tr>
+            <tr><td><b>Jun–Sep</b></td><td>Heavy rain and waterfalls at their best; paragliding stops, some points close, boating may pause, fog can hide views</td></tr>
+            <tr><td><b>Aug–Oct</b></td><td>Kaas Plateau flowers, available as an add-on</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Good to know: sunrise moves between about 6:10 am and 7:10 am through the year, so we set sunrise pickup times by the month. In monsoon we swap closed points for waterfalls such as Lingmala, Chinaman's Falls, Bhilar Falls and Borgaon.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span class="yr"></span> Visit Wai, Wai, Maharashtra</span>
+    <nav aria-label="Footer"><ul><li><a href="index.html">Home</a></li><li><a href="places.html">Places to visit</a></li><li><a data-email data-keep href="#">Email us</a></li></ul></nav>
+  </div>
+</footer>
+
+<a class="wa" data-wa href="#" target="_blank" rel="noopener">WhatsApp us</a>
+
+<script src="data.js"></script>
+<script>
+  const host = document.getElementById('itins');
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  PACKAGES.forEach(p => {
+    const s = document.createElement('article');
+    s.className = 'itin' + (p.group === 'special' ? ' special' : '');
+    s.id = p.id;
+    s.dataset.group = p.group; s.dataset.cat = p.category;
+    const who = p.group === 'special' ? 'Special package' : `${p.group === '2day' ? '2-day' : '3-day'} package for ${p.category.toLowerCase()}`;
+    const days = p.days.map(d => `
+      <h4 class="day-title">${esc(d.title)}</h4>
+      <div class="table-wrap"><table class="day-table">
+        <thead><tr><th>Time</th><th>Stop</th><th>What to do</th></tr></thead>
+        <tbody>${d.stops.map(st => `<tr><td class="time">${esc(st[0])}</td><td><b>${esc(st[1])}</b></td><td>${esc(st[2])}</td></tr>`).join('')}</tbody>
+      </table></div>`).join('');
+    const notes = (p.notes || []).map(n => `<p class="note">${esc(n)}</p>`).join('');
+    s.innerHTML = `
+      <div class="itin-head">
+        <div><span class="who">${esc(who)}</span><h3>${esc(p.name)}</h3></div>
+        <a class="btn" href="index.html?pkg=${p.id}#contact">Enquire about this trip</a>
+      </div>
+      <p class="summary">${esc(p.summary)}</p>
+      <div class="meta">
+        <div><span>Best for</span> <b>${esc(p.bestFor)}</b></div>
+        <div><span>Car</span> <b>${esc(p.car)}</b></div>
+        <div><span>Stay</span> <b>${esc(p.stay)}</b></div>
+        <div><span>Walking</span> <b>${esc(p.walking)}</b></div>
+        ${p.extra ? `<div><b>${esc(p.extra)}</b></div>` : ''}
+      </div>
+      ${days}${notes}`;
+    host.appendChild(s);
+  });
+
+  /* Filters */
+  const chips = document.querySelectorAll('.chip');
+  chips.forEach(c => c.addEventListener('click', () => {
+    chips.forEach(x => x.setAttribute('aria-pressed', x === c));
+    const f = c.dataset.f;
+    document.querySelectorAll('.itin').forEach(el => {
+      el.hidden = !(f === 'all' || el.dataset.group === f || el.dataset.cat === f);
+    });
+  }));
+
+  /* Jump to a package when arriving from the home page */
+  if (location.hash) { const t = document.querySelector(location.hash); if (t) setTimeout(() => t.scrollIntoView(), 50); }
+</script>
+</body>
+</html>
