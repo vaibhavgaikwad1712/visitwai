@@ -3,10 +3,10 @@
    Change these once and every page updates.
    ===================================================================== */
 const SITE = {
-  email: "support@visitwai.in",
-  phoneDisplay: "+91 00000 00000",   // how the number looks on the site
-  phoneLink: "+910000000000",        // same number, no spaces
-  whatsapp: "910000000000",          // country code + number, no + or spaces
+  email: "visitwaitour@gmail.com",
+  phoneDisplay: "+91 98342 14377",   // how the number looks on the site
+  phoneLink: "+919834214377",        // same number, no spaces
+  whatsapp: "919834214377",          // country code + number, no + or spaces
   instagram: "visitwai"
 };
 
@@ -22,7 +22,7 @@ const PACKAGES = [
     id: "couples-2", group: "2day", category: "Couples",
     name: "Hills for Two",
     summary: "A private 2-day trip for couples with a verified driver, a couple-friendly hotel, sunset at Bombay Point and an optional Wilson Point sunrise.",
-    car: "Swift Dzire / Honda Amaze", stay: "1 night, couple-friendly hotel in Mahabaleshwar", walking: "Moderate", bestFor: "Couples, honeymooners",
+    stay: "1 night, couple-friendly hotel in Mahabaleshwar", walking: "Moderate", bestFor: "Couples, honeymooners",
     days: [
       { title: "Day 1: Wai → Panchgani → Mahabaleshwar", stops: [
         ["8:00 am", "Dholya Ganpati, Wai", "Darshan and photos on the Krishna ghat"],
@@ -54,7 +54,7 @@ const PACKAGES = [
     id: "families-2", group: "2day", category: "Families",
     name: "Hills, Rides & Strawberries",
     summary: "Pony carts, an adventure park, the Wax Museum and Mapro's chocolate factory, with no early starts so kids can sleep in.",
-    car: "Ertiga (up to 6) or Innova (7)", stay: "1 night, family room in Mahabaleshwar", walking: "Easy to moderate", bestFor: "Parents with kids",
+    stay: "1 night, family room in Mahabaleshwar", walking: "Easy to moderate", bestFor: "Parents with kids",
     days: [
       { title: "Day 1: Wai → Panchgani → Mahabaleshwar", stops: [
         ["8:30 am", "Dholya Ganpati, Wai", "Quick darshan"],
@@ -83,7 +83,7 @@ const PACKAGES = [
     id: "seniors-2", group: "2day", category: "Seniors",
     name: "Easy Hills with a Caretaker",
     summary: "A gentle trip for elders with a trained caretaker for both days. Every stop is close to parking, with rest after lunch and home before dark.",
-    car: "Toyota Innova Crysta", stay: "1 night, ground-floor or lift-access room", walking: "Very easy", bestFor: "Elderly couple + caretaker",
+    stay: "1 night, ground-floor or lift-access room", walking: "Very easy", bestFor: "Elderly couple + caretaker",
     days: [
       { title: "Day 1: Wai → Panchgani → Mahabaleshwar", stops: [
         ["9:00 am", "Dholya Ganpati, Wai", "Darshan; caretaker helps on the ghat steps"],
@@ -111,7 +111,7 @@ const PACKAGES = [
     id: "groups-2", group: "2day", category: "Groups",
     name: "Adventure Weekend",
     summary: "Paragliding, go-karting, zip lines and a hotel bonfire, then a Wilson Point sunrise and the big Mahabaleshwar viewpoints.",
-    car: "Tempo Traveller (12 or 17 seats) or Innova for 7", stay: "1 night, shared rooms (2–4 per room)", walking: "Active", bestFor: "Friends, college and office groups",
+    stay: "1 night, shared rooms (2–4 per room)", walking: "Active", bestFor: "Friends, college and office groups",
     days: [
       { title: "Day 1: Wai → Panchgani → Mahabaleshwar", stops: [
         ["7:30 am", "Dholya Ganpati & Menavali Ghat", "Group photos on the ghats"],
@@ -137,7 +137,7 @@ const PACKAGES = [
         ["6:45 pm", "Drop in Wai", ""]
       ]}
     ],
-    notes: ["Tempo Travellers park further from some points (Arthur's Seat, Kate's Point), so a little extra walking is needed."]
+    notes: ["Larger group vehicles park further from some points (Arthur's Seat, Kate's Point), so a little extra walking is needed."]
   },
 
   /* ---------------- 3-DAY ---------------- */
@@ -145,7 +145,7 @@ const PACKAGES = [
     id: "couples-3", group: "3day", category: "Couples",
     name: "Slow Hills for Two",
     summary: "Three relaxed days: Wai's ghats and Dhom Dam, the art and book villages of Panchgani, then a sunrise and a lake day at Tapola.",
-    car: "Swift Dzire / Honda Amaze", stay: "1 night Panchgani, 1 night Mahabaleshwar", walking: "Moderate", bestFor: "Couples wanting slower days",
+    stay: "1 night Panchgani, 1 night Mahabaleshwar", walking: "Moderate", bestFor: "Couples wanting slower days",
     days: [
       { title: "Day 1: Wai heritage → Dhom → Panchgani", stops: [
         ["9:00 am", "Dholya Ganpati & Kashi Vishweshwar, Wai", "Darshan on the ghat"],
@@ -182,7 +182,7 @@ const PACKAGES = [
     id: "families-3", group: "3day", category: "Families",
     name: "Rides, Books & a Fort",
     summary: "An amusement park day, a storybook village, strawberry picking and Mapro, then the story of Shivaji Maharaj at Pratapgad Fort.",
-    car: "Ertiga or Innova", stay: "1 night Panchgani, 1 night Mahabaleshwar", walking: "Easy to moderate", bestFor: "Families with kids",
+    stay: "1 night Panchgani, 1 night Mahabaleshwar", walking: "Easy to moderate", bestFor: "Families with kids",
     days: [
       { title: "Day 1: Wai → Panchgani", stops: [
         ["9:00 am", "Dholya Ganpati & Menavali Ghat", "Film-location story for kids"],
@@ -217,7 +217,7 @@ const PACKAGES = [
     id: "seniors-3", group: "3day", category: "Seniors",
     name: "Unhurried Hills",
     summary: "Three slow days with one hotel for both nights, so nobody repacks. A caretaker all three days and rest at the hotel after every lunch.",
-    car: "Toyota Innova Crysta", stay: "2 nights, same Mahabaleshwar hotel, ground floor or lift", walking: "Very easy", bestFor: "Elderly couple + caretaker",
+    stay: "2 nights, same Mahabaleshwar hotel, ground floor or lift", walking: "Very easy", bestFor: "Elderly couple + caretaker",
     days: [
       { title: "Day 1: Wai → Mahabaleshwar", stops: [
         ["9:30 am", "Dholya Ganpati, Wai", "Darshan"],
@@ -251,7 +251,7 @@ const PACKAGES = [
     id: "groups-3", group: "3day", category: "Groups",
     name: "Forts, Flying & Kayaks",
     summary: "A Pandavgad fort trek, Dhom water sports, paragliding and an adventure park, then Pratapgad Fort and kayaking at Tapola.",
-    car: "Tempo Traveller or Innova", stay: "1 night Panchgani, 1 night Mahabaleshwar, shared rooms", walking: "High", bestFor: "Adventure groups",
+    stay: "1 night Panchgani, 1 night Mahabaleshwar, shared rooms", walking: "High", bestFor: "Adventure groups",
     days: [
       { title: "Day 1: Pandavgad trek → Dhom → Panchgani", stops: [
         ["7:00 am", "Pandavgad Fort trek, Wai", "About 3 hrs up and down with a local guide"],
@@ -287,7 +287,7 @@ const PACKAGES = [
     id: "ancient-wai", group: "special", category: "Heritage",
     name: "Ancient Wai",
     summary: "A heritage trail through \"Dakshin Kashi\": the Krishna ghats and their temples, Peshwa-era Menavali, the Buddhist caves of Lohare and, on an optional second day, the source of the Krishna and Pratapgad Fort.",
-    car: "Sedan or Innova", stay: "1 day, or 2 days with a night in Wai", walking: "Moderate", bestFor: "History and temple lovers",
+    stay: "1 day, or 2 days with a night in Wai", walking: "Moderate", bestFor: "History and temple lovers",
     extra: "Local history guide included on Day 1",
     days: [
       { title: "Day 1: Ghats, Wada and Caves (Wai)", stops: [
@@ -323,7 +323,7 @@ const PACKAGES = [
     id: "scenic-hidden", group: "special", category: "Scenic",
     name: "Scenic & Hidden Places",
     summary: "Two days chasing light: misty river mornings, quiet backwaters, plateaus and caves, then the best sunrise and sunset edges of Mahabaleshwar, including points most tour cars skip.",
-    car: "Sedan or Innova", stay: "1 night in Panchgani", walking: "Moderate to active", bestFor: "Photographers and nature lovers",
+    stay: "1 night in Panchgani", walking: "Moderate to active", bestFor: "Photographers and nature lovers",
     extra: "Best Oct–Feb for clear views, Jul–Sep for waterfalls",
     days: [
       { title: "Day 1: Wai valley → Panchgani", stops: [
@@ -375,10 +375,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }));
   }
   document.querySelectorAll(".yr").forEach(el => el.textContent = new Date().getFullYear());
-  document.querySelectorAll("[data-email]").forEach(el => { el.href = "mailto:" + SITE.email; if (!el.dataset.keep) el.textContent = SITE.email; });
+  document.querySelectorAll("[data-email]").forEach(el => { el.href = "mailto:" + SITE.email; if (!el.hasAttribute("data-keep")) el.textContent = SITE.email; });
   document.querySelectorAll("[data-phone]").forEach(el => { el.href = "tel:" + SITE.phoneLink; el.textContent = SITE.phoneDisplay; });
   document.querySelectorAll("[data-wa]").forEach(el => el.href = "https://wa.me/" + SITE.whatsapp);
-  document.querySelectorAll("[data-insta]").forEach(el => { el.href = "https://instagram.com/" + SITE.instagram; if (!el.dataset.keep) el.textContent = "@" + SITE.instagram; });
+  document.querySelectorAll("[data-insta]").forEach(el => { el.href = "https://instagram.com/" + SITE.instagram; if (!el.hasAttribute("data-keep")) el.textContent = "@" + SITE.instagram; });
 });
 
 function pkgLabel(p) {

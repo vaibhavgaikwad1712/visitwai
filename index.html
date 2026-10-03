@@ -22,7 +22,7 @@
         <li><a href="packages.html">Packages</a></li>
         <li><a href="places.html">Places to visit</a></li>
         <li><a href="#included">What's included</a></li>
-        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#reviews">Why us</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -112,47 +112,22 @@
     </div>
   </section>
 
-  <section id="cars" class="alt" aria-labelledby="car-title">
-    <div class="wrap">
-      <h2 id="car-title">Which car you'll travel in</h2>
-      <p class="lede">All cars are AC, clean, and driven by local drivers experienced on ghat roads. Exact model depends on availability.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Package</th><th>Car</th><th>Seats</th><th>Why this car</th></tr></thead>
-          <tbody>
-            <tr><td><b>Couples</b></td><td>Swift Dzire / Honda Amaze</td><td>4</td><td>Comfortable private sedan, enough boot space for two bags.</td></tr>
-            <tr><td><b>Seniors + caretaker</b></td><td>Toyota Innova Crysta</td><td>6–7</td><td>Higher seats for easy entry, room for the caretaker and a folded wheelchair.</td></tr>
-            <tr><td><b>Families (up to 6)</b></td><td>Maruti Ertiga</td><td>6</td><td>Fits a small family with luggage.</td></tr>
-            <tr><td><b>Families / groups of 7</b></td><td>Toyota Innova Crysta</td><td>7</td><td>More legroom on the winding ghat roads.</td></tr>
-            <tr><td><b>Groups (8–17)</b></td><td>Force Tempo Traveller</td><td>12 / 17</td><td>One vehicle for the whole group, pushback seats and luggage carrier.</td></tr>
-            <tr><td><b>Ancient Wai, Scenic & Hidden</b></td><td>Sedan or Innova</td><td>4–7</td><td>Chosen by group size.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
 
-  <section id="food" aria-labelledby="food-title">
-    <div class="wrap">
-      <h2 id="food-title">What food is served</h2>
-      <p class="lede">Meals are optional. Add them while booking, or eat on your own. Veg, non-veg and Jain options available.</p>
-      <div class="meals">
-        <div class="meal"><h3>Breakfast</h3><p>Poha, upma, misal pav, thalipeeth with white butter, bread-omelette, tea and coffee.</p></div>
-        <div class="meal"><h3>Lunch</h3><p>Maharashtrian veg thali with bhakri, pithla, varan-bhaat and koshimbir. Chicken or mutton thali for non-veg.</p></div>
-        <div class="meal"><h3>Evening snacks</h3><p>Roasted corn, strawberries with cream, Mapro shakes, vada pav and hot chai at the points.</p></div>
-        <div class="meal"><h3>Dinner</h3><p>Chapati, paneer or seasonal sabzi, dal, rice and sweet. Chicken curry for non-veg.</p></div>
-        <div class="meal care"><h3>For seniors</h3><p>Low-spice, low-oil meals, khichdi and soft food, diabetic-friendly options, warm water on request.</p></div>
-      </div>
-    </div>
-  </section>
 
   <section id="reviews" class="alt" aria-labelledby="rv-title">
     <div class="wrap">
-      <h2 id="rv-title">What our travellers say</h2>
-      <p class="lede">Feedback from couples, families and seniors who travelled with Visit Wai.</p>
-      <div class="reviews" id="reviewList"></div>
+      <h2 id="rv-title">Why travel with Visit Wai</h2>
+      <p class="lede">We're locals from Wai, and these are the things we promise on every trip.</p>
+      <div class="reviews">
+        <figure class="review"><blockquote>Born and raised in Wai. We know which point to visit before the crowds arrive.</blockquote></figure>
+        <figure class="review"><blockquote>Sunrise, sunset and lunch timed so you never rush.</blockquote></figure>
+        <figure class="review"><blockquote>Your driver's name and car number reach you before pickup.</blockquote></figure>
+        <figure class="review"><blockquote>Elders travel slowly, with a caretaker and a ground-floor or lift-access room.</blockquote></figure>
+        <figure class="review"><blockquote>Entry tickets are already paid. No queues, no surprises.</blockquote></figure>
+        <figure class="review"><blockquote>Hidden ghats and quiet backwaters most tour cars never stop at.</blockquote></figure>
+      </div>
       <div class="row-actions">
-        <a class="btn ghost" data-email data-keep href="#">Share your feedback</a>
+        <a class="btn ghost" data-email data-keep href="#">Travelled with us? Share your feedback</a>
         <a class="btn ghost" data-insta data-keep href="#" target="_blank" rel="noopener">See trip photos on Instagram</a>
       </div>
     </div>
@@ -209,19 +184,6 @@
 
 <script src="data.js"></script>
 <script>
-  /* ===== CUSTOMER REVIEWS =====
-     Replace these with REAL feedback from your customers (WhatsApp messages,
-     Instagram DMs, Google reviews). Ask their permission before posting.
-     To add a review, copy one { ... }, block, paste it below, and edit it. */
-  const reviews = [
-    { name: "Customer name", place: "City", package: "Couples package", stars: 5,
-      text: "Paste the customer's real words here, for example what they liked about the driver, hotel or places." },
-    { name: "Customer name", place: "City", package: "Families package", stars: 5,
-      text: "Paste a real review from a family or group trip here." },
-    { name: "Customer name", place: "City", package: "Seniors package", stars: 5,
-      text: "Paste a real review from a senior couple or their children here." }
-  ];
-
   /* Package cards, grouped */
   const groupsEl = document.getElementById('pkgGroups');
   ["2day", "3day", "special"].forEach(g => {
@@ -232,7 +194,7 @@
       const a = document.createElement('article');
       a.className = 'pkg' + (g === 'special' ? ' special' : '');
       a.innerHTML = `<span class="who"></span><h3></h3><p></p>
-        <dl><dt>Car</dt><dd class="c"></dd><dt>Stay</dt><dd class="s"></dd><dt>Walking</dt><dd class="w"></dd></dl>
+        <dl><dt>Stay</dt><dd class="s"></dd><dt>Walking</dt><dd class="w"></dd></dl>
         <div class="card-actions">
           <a class="btn small-btn" href="#contact" data-pkg="${p.id}">Enquire</a>
           <a class="btn ghost small-btn" href="packages.html#${p.id}">See itinerary</a>
@@ -240,7 +202,6 @@
       a.querySelector('.who').textContent = g === 'special' ? 'Special package' : `For ${p.category.toLowerCase()}`;
       a.querySelector('h3').textContent = p.name;
       a.querySelector('p').textContent = p.summary;
-      a.querySelector('.c').textContent = p.car;
       a.querySelector('.s').textContent = p.stay;
       a.querySelector('.w').textContent = p.walking;
       grid.appendChild(a);
@@ -257,22 +218,6 @@
   });
   const wanted = new URLSearchParams(location.search).get('pkg');
   if (wanted && PACKAGES.some(p => p.id === wanted)) sel.value = wanted;
-
-  /* Reviews */
-  const list = document.getElementById('reviewList');
-  reviews.forEach(r => {
-    const card = document.createElement('figure');
-    card.className = 'review';
-    const s = Math.max(1, Math.min(5, r.stars));
-    card.innerHTML = `<span class="tag"></span>
-      <div class="stars" aria-label="${s} out of 5 stars">${'★'.repeat(s)}${'☆'.repeat(5 - s)}</div>
-      <blockquote></blockquote><figcaption class="by"><b></b><span></span></figcaption>`;
-    card.querySelector('.tag').textContent = r.package;
-    card.querySelector('blockquote').textContent = `“${r.text}”`;
-    card.querySelector('.by b').textContent = r.name;
-    card.querySelector('.by span').textContent = r.place;
-    list.appendChild(card);
-  });
 
   /* Form opens the visitor's email app with the enquiry filled in */
   document.getElementById('enquiry').addEventListener('submit', e => {
