@@ -245,3 +245,6 @@ fieldset.addons legend{font-weight:500;font-size:.95rem;padding:0 .3rem}
 .itin-points li::before{content:"✓";position:absolute;left:0;color:var(--forest);font-weight:700}
 
 [hidden]{display:none !important}
+table.mini td.th{font-weight:500;color:var(--soft);font-size:.85rem;text-align:right}
+table.mini tr td:nth-child(2){text-align:right}
+.price-box .box-notes p{margin-top:.4rem}

@@ -72,23 +72,37 @@
   <section id="prices" class="alt" aria-labelledby="pr-title">
     <div class="wrap">
       <h2 id="pr-title">Prices</h2>
-      <p class="lede">Every trip price has two parts: the package cost per day, plus your hotel for each night you stay. Choose your hotel type and add-ons in the booking form to see your exact total.</p>
+      <p class="lede">A trip price is the package cost per day for your group size, plus your hotel rooms for each night you stay. Choose your group, hotel and add-ons in the booking form to see your exact total.</p>
       <div class="price-grid">
         <div class="price-card">
-          <h3>Package cost</h3>
-          <p class="big" id="pPkg"></p>
-          <p class="small">per day. Covers the AC car, driver, fuel, tolls, parking, tourist tax and entry tickets on the itinerary.</p>
+          <h3>Package cost, per day</h3>
+          <table class="mini" id="pTiers"></table>
+          <p class="small">Covers the AC car, driver, fuel, tolls, parking, tourist tax and entry tickets on the itinerary.</p>
         </div>
         <div class="price-card">
-          <h3>Hotel, per stay</h3>
+          <h3>Hotel, per room per night</h3>
           <table class="mini" id="pHotels"></table>
+          <p class="small">One room is for 2 people.</p>
         </div>
         <div class="price-card">
-          <h3>Add-ons and driver, per day</h3>
+          <h3>Add-ons, per day</h3>
           <table class="mini" id="pAddons"></table>
         </div>
+        <div class="price-card">
+          <h3>Villa and driver</h3>
+          <table class="mini" id="pOther"></table>
+        </div>
       </div>
-      <p class="note" id="pExample"></p>
+      <div class="incl" style="margin-top:2rem">
+        <div class="in">
+          <h3>Guests and rooms</h3>
+          <ul id="pPolicy"></ul>
+        </div>
+        <div>
+          <h3>Example</h3>
+          <p class="note" id="pExample" style="margin-top:.5rem"></p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -181,12 +195,19 @@
           <label>Package<select name="package" id="pkgSelect"></select></label>
           <div class="row">
             <label>Travel date<input name="date" type="date"></label>
-            <label>Number of days<input name="days" id="daysInput" type="number" min="1" max="15" value="2"></label>
+            <label><span id="daysLabel">Number of days</span><input name="days" id="daysInput" type="number" min="1" max="15" value="2"></label>
           </div>
-          <label id="hotelWrap">Hotel required
-            <select name="hotel" id="hotelSelect"></select>
-          </label>
-          <label>Number of people<input name="people" type="number" min="1" max="17" value="2"></label>
+          <div class="row">
+            <label>People (adults and children 5+)<input name="people" id="peopleInput" type="number" min="1" max="20" value="2"></label>
+            <label>Children under 5 (free, max 2)<input name="kids" id="kidsInput" type="number" min="0" max="2" value="0"></label>
+          </div>
+          <div class="row" id="hotelWrap">
+            <label>Hotel required
+              <select name="hotel" id="hotelSelect"></select>
+            </label>
+            <label id="roomsWrap">Rooms<input name="rooms" id="roomsInput" type="number" min="1" max="20" value="1"></label>
+          </div>
+
           <fieldset class="addons">
             <legend>Add-ons</legend>
             <label class="check-terms"><input type="checkbox" name="addon" value="photographer"><span id="lblPhoto"></span></label>
@@ -253,65 +274,111 @@
   });
 
   /* ---------- Prices section ---------- */
-  document.getElementById('pPkg').textContent = inr(PRICING.packagePerDay);
+  let lo = 1;
+  document.getElementById('pTiers').innerHTML = PRICING.packageTiers.map(t => {
+    const row = `<tr><td>${lo}–${t.upTo} people</td><td>${inr(t.perDay)}</td></tr>`; lo = t.upTo + 1; return row;
+  }).join('');
   document.getElementById('pHotels').innerHTML = Object.entries(PRICING.hotelsPerNight)
     .map(([k, v]) => `<tr><td>${k}</td><td>${inr(v)}</td></tr>`).join('');
-  document.getElementById('pAddons').innerHTML = Object.values(PRICING.addons)
-    .map(a => `<tr><td>${a.label}</td><td>${inr(a.perDay)}</td></tr>`).join('') +
-    `<tr><td>Driver for your own car</td><td>${inr(PRICING.driverOnlyPerDay)}</td></tr>`;
-  const ex = calcPrice(PACKAGES.find(p => p.id === 'couples-3'), 3, '3 star', []);
+  const big = PRICING.addons.largeGroupFrom;
+  document.getElementById('pAddons').innerHTML = ['photographer', 'drone'].map(k => {
+    const a = PRICING.addons[k], short = k === 'photographer' ? 'Photographer (DSLR)' : 'Drone, up to 10 shots';
+    return `<tr><td>${short}, up to ${big - 1} people</td><td>${inr(a.perDay)}</td></tr><tr><td>${short}, ${big}–20 people</td><td>${inr(a.perDayLarge)}</td></tr>`;
+  }).join('');
+  document.getElementById('pOther').innerHTML =
+    `<tr><td>Pool villa, up to ${PRICING.villa.maxGuests} guests, per night (Wai stand pickup and drop ${PRICING.villa.transfer ? inr(PRICING.villa.transfer) + ' extra' : 'included'})</td><td>${inr(PRICING.villa.perNight)}</td></tr>` +
+    `<tr><td>Driver for your own car, per day</td><td>${inr(PRICING.driverOnlyPerDay)}</td></tr>`;
+  document.getElementById('pPolicy').innerHTML = [
+    `Package prices are for 2 people. Up to 3 people pay the same ${inr(PRICING.packageTiers[0].perDay)} a day.`,
+    `Hotel prices are per room for 2 people. A 3rd person in a room depends on the hotel; its extra-bed charge is added when we confirm.`,
+    `Solo travellers pay the 2-person price.`,
+    `Up to ${PRICING.children.maxFree} children under ${PRICING.children.freeUnderAge} travel free, sharing their parents' bed and seat. Children ${PRICING.children.freeUnderAge} and above count as people.`,
+    `Packages are for up to ${PRICING.maxPeople} people; the pool villa for up to ${PRICING.villa.maxGuests}.`
+  ].map(t => `<li>${t}</li>`).join('');
+  const exP = PACKAGES.find(p => p.id === 'families-3');
+  const ex = calcPrice(exP, { days: 3, people: 5, rooms: 3, hotel: '3 star', addons: [] });
   document.getElementById('pExample').textContent =
-    `Example: a 3-day trip with a 3 star hotel = 3 days × ${inr(PRICING.packagePerDay)} + 2 stays × ${inr(PRICING.hotelsPerNight['3 star'])} = ${inr(ex.total)}. A 1-day trip has no hotel stay.`;
+    `A family of 5 on a 3-day trip with a 3 star hotel: 3 days × ${inr(tierRate(5))} (4–6 people) + 3 rooms × 2 nights × ${inr(PRICING.hotelsPerNight['3 star'])} = ${inr(ex.total)}.`;
 
   /* ---------- Booking form ---------- */
   const form = document.getElementById('enquiry');
   const sel = document.getElementById('pkgSelect');
   const hotelSel = document.getElementById('hotelSelect');
   const daysIn = document.getElementById('daysInput');
+  const peopleIn = document.getElementById('peopleInput');
+  const kidsIn = document.getElementById('kidsInput');
+  const roomsIn = document.getElementById('roomsInput');
   const box = document.getElementById('priceBox');
-  document.getElementById('lblPhoto').textContent = `${PRICING.addons.photographer.label}, ${inr(PRICING.addons.photographer.perDay)} per day`;
-  document.getElementById('lblDrone').textContent = `${PRICING.addons.drone.label}, ${inr(PRICING.addons.drone.perDay)} per day`;
+  const bigLabel = k => `${PRICING.addons[k].label}: ${inr(PRICING.addons[k].perDay)} a day (${inr(PRICING.addons[k].perDayLarge)} for ${PRICING.addons.largeGroupFrom}+ people)`;
+  document.getElementById('lblPhoto').textContent = bigLabel('photographer');
+  document.getElementById('lblDrone').textContent = bigLabel('drone');
 
   PACKAGES.forEach(p => sel.add(new Option(pkgLabel(p), p.id)));
   hotelSel.add(new Option('Choose hotel type', ''));
-  Object.entries(PRICING.hotelsPerNight).forEach(([k, v]) => hotelSel.add(new Option(`${k}, ${inr(v)} per stay`, k)));
+  Object.entries(PRICING.hotelsPerNight).forEach(([k, v]) => hotelSel.add(new Option(`${k}, ${inr(v)} per room per night`, k)));
   hotelSel.add(new Option('No hotel needed (I have my own stay)', 'none'));
 
   const current = () => PACKAGES.find(p => p.id === sel.value);
   const addonKeys = () => [...form.querySelectorAll('input[name=addon]:checked')].map(i => i.value);
+  const num = (el, d) => { const n = parseInt(el.value, 10); return isNaN(n) ? d : n; };
+  const clamp = (n, a, b) => Math.min(Math.max(n, a), b);
 
+  function setRoomsDefault() {
+    const people = clamp(num(peopleIn, 2), 1, 20);
+    roomsIn.min = Math.max(1, Math.ceil(people / 3));
+    roomsIn.max = people;
+    roomsIn.value = Math.ceil(people / 2);
+  }
   function onPackageChange(setDays) {
     const p = current();
     if (setDays) daysIn.value = p.baseDays;
     daysIn.min = p.kind || p.id === 'ancient-wai' ? 1 : p.baseDays;
-    document.getElementById('hotelWrap').hidden = p.kind === 'driver';
+    document.getElementById('daysLabel').textContent = p.kind === 'villa' ? 'Number of nights' : 'Number of days';
+    peopleIn.max = p.kind === 'villa' ? PRICING.villa.maxGuests : PRICING.maxPeople;
+    if (p.kind === 'villa' && setDays) peopleIn.value = PRICING.villa.maxGuests;
+    document.getElementById('hotelWrap').hidden = !!p.kind && p.kind !== 'custom';
     update();
   }
-  function update() {
+  function options() {
     const p = current();
-    const days = Math.max(parseInt(daysIn.value, 10) || 1, parseInt(daysIn.min, 10) || 1);
-    if (p.kind === 'custom') {
-      box.innerHTML = '<h3>Custom trip</h3><p>Tell us your plan in the notes and we\'ll send you a price.</p>';
-      return;
-    }
-    const hotel = p.kind === 'driver' ? '' : hotelSel.value;
-    const r = calcPrice(p, days, hotel === 'none' ? '' : hotel, addonKeys());
-    let note = '';
-    if (!p.kind && !hotel && days > 1) note = '<p class="small">Choose a hotel type to add your stay.</p>';
-    if (days === 1 && !p.kind) note = '<p class="small">1-day trip: no hotel stay.</p>';
-    box.innerHTML = `<h3>Your price</h3><table class="mini">${r.lines.map(l => `<tr><td></td><td>${inr(l[1])}</td></tr>`).join('')}</table>
-      <p class="total">Total <b>${inr(r.total)}</b></p>${note}`;
-    box.querySelectorAll('td:first-child').forEach((td, i) => td.textContent = r.lines[i][0]);
+    return {
+      days: Math.max(num(daysIn, 1), parseInt(daysIn.min, 10) || 1),
+      people: clamp(num(peopleIn, 2), 1, 99),
+      rooms: clamp(num(roomsIn, 1), 1, 99),
+      hotel: hotelSel.value === 'none' ? '' : hotelSel.value,
+      addons: addonKeys()
+    };
   }
-  sel.addEventListener('change', () => onPackageChange(true));
-  [hotelSel, daysIn].forEach(el => el.addEventListener('input', update));
+  function update() {
+    const p = current(), o = options();
+    document.getElementById('roomsWrap').hidden = !o.hotel || p.kind;
+    if (num(kidsIn, 0) > PRICING.children.maxFree) kidsIn.value = PRICING.children.maxFree;
+    if (p.kind === 'custom') {
+      box.innerHTML = '<h3>Custom trip</h3><p>Tell us your plan in the notes and we\'ll send you a price.</p>'; return;
+    }
+    const r = calcPrice(p, o);
+    if (r.error) { box.innerHTML = `<h3>Your price</h3><p></p>`; box.querySelector('p').textContent = r.error; return; }
+    const extra = [];
+    if (!p.kind && !o.hotel && o.days > 1) extra.push('Choose a hotel type to add your stay.');
+    if (!p.kind && o.days === 1) extra.push('1-day trip: no hotel stay.');
+    if (num(kidsIn, 0) > 0) extra.push(`${num(kidsIn, 0)} child${num(kidsIn, 0) > 1 ? 'ren' : ''} under ${PRICING.children.freeUnderAge}: free.`);
+    box.innerHTML = `<h3>Your price</h3><table class="mini">${r.lines.map(() => '<tr><td></td><td></td></tr>').join('')}</table>
+      <p class="total">Total <b>${inr(r.total)}</b></p><div class="box-notes"></div>`;
+    box.querySelectorAll('tr').forEach((tr, i) => { tr.cells[0].textContent = r.lines[i][0]; tr.cells[1].textContent = inr(r.lines[i][1]); });
+    const nb = box.querySelector('.box-notes');
+    [...r.notes, ...extra].forEach(t => { const el = document.createElement('p'); el.className = 'small'; el.textContent = t; nb.appendChild(el); });
+  }
+  sel.addEventListener('change', () => { onPackageChange(true); setRoomsDefault(); update(); });
+  peopleIn.addEventListener('input', () => { setRoomsDefault(); update(); });
+  [hotelSel, daysIn, roomsIn, kidsIn].forEach(el => el.addEventListener('input', update));
+  hotelSel.addEventListener('change', update);
   form.querySelectorAll('input[name=addon]').forEach(el => el.addEventListener('change', update));
   document.addEventListener('click', e => {
-    const b = e.target.closest('[data-pkg]'); if (b) { sel.value = b.dataset.pkg; onPackageChange(true); }
+    const b = e.target.closest('[data-pkg]'); if (b) { sel.value = b.dataset.pkg; onPackageChange(true); setRoomsDefault(); update(); }
   });
   const wanted = new URLSearchParams(location.search).get('pkg');
   sel.value = PACKAGES.some(p => p.id === wanted) ? wanted : PACKAGES[0].id;
-  onPackageChange(true);
+  onPackageChange(true); setRoomsDefault(); update();
 
   /* ---------- Send booking ----------
      Sent straight to SITE.email through FormSubmit (formsubmit.co).
@@ -324,18 +391,23 @@
     if (!p.kind && !hotelSel.value) { msg.textContent = 'Choose the hotel type you need.'; hotelSel.focus(); return; }
     if (!f.terms.checked) { msg.textContent = 'Please tick the box to accept the Terms & Conditions before booking.'; f.terms.focus(); return; }
 
-    const days = Math.max(parseInt(daysIn.value, 10) || 1, parseInt(daysIn.min, 10) || 1);
-    const hotel = p.kind === 'driver' ? 'Not applicable' : (hotelSel.value === 'none' ? 'No hotel needed' : hotelSel.value || 'Not chosen');
-    const r = calcPrice(p, days, hotelSel.value === 'none' ? '' : hotelSel.value, addonKeys());
-    const addonText = addonKeys().map(k => PRICING.addons[k].label).join(', ') || 'None';
+    const o = options();
+    const r = calcPrice(p, o);
+    if (r && r.error) { msg.textContent = r.error; return; }
+    const hotel = p.kind && p.kind !== 'custom' ? 'Not applicable' : (hotelSel.value === 'none' ? 'No hotel needed' : hotelSel.value || 'Not chosen');
+    const addonText = o.addons.map(k => PRICING.addons[k].label).join(', ') || 'None';
     const data = {
-      _subject: `New booking: ${p.name} (${days} day${days > 1 ? 's' : ''})`,
+      _subject: `New booking: ${p.name} (${o.days} ${p.kind === 'villa' ? 'night' : 'day'}${o.days > 1 ? 's' : ''}, ${o.people} ${o.people > 1 ? "people" : "person"})`,
       _template: 'table',
       _captcha: 'false',
       Name: f.name.value, Phone: f.phone.value, Email: f.email.value || 'Not given',
-      Package: pkgLabel(p), 'Travel date': f.date.value || 'Not decided', Days: days,
-      Hotel: hotel, People: f.people.value, 'Add-ons': addonText, Food: f.food.value,
+      Package: pkgLabel(p), 'Travel date': f.date.value || 'Not decided',
+      [p.kind === 'villa' ? 'Nights' : 'Days']: o.days,
+      People: o.people, 'Children under 5': num(kidsIn, 0),
+      Hotel: hotel, Rooms: o.hotel && !p.kind ? o.rooms : '-',
+      'Add-ons': addonText, Food: f.food.value,
       'Price shown': r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).join(' | ') + ` | TOTAL ${inr(r.total)}` : 'Custom trip: quote needed',
+      'Price notes': r && r.notes.length ? r.notes.join(' ') : '-',
       Notes: f.notes.value || '-', 'Terms accepted': 'Yes'
     };
     btn.disabled = true; msg.textContent = 'Sending your booking…';
@@ -345,7 +417,7 @@
         body: JSON.stringify(data)
       });
       if (!res.ok) throw new Error('send failed');
-      form.reset(); sel.value = p.id; onPackageChange(true);
+      form.reset(); sel.value = p.id; onPackageChange(true); setRoomsDefault(); update();
       msg.innerHTML = 'Booking sent! We\'ll call you soon to confirm. <a data-wa-msg href="#">Also message us on WhatsApp</a>';
     } catch (err) {
       const body = Object.entries(data).filter(([k]) => !k.startsWith('_')).map(([k, v]) => `${k}: ${v}`).join('\n');

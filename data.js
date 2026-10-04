@@ -15,19 +15,29 @@ const SITE = {
    PRICES — change these numbers and every page and the booking form update.
    ===================================================================== */
 const PRICING = {
-  packagePerDay: 5500,          // car, driver, fuel, tolls, parking, entry tickets, per day
-  hotelsPerNight: {             // hotel price per stay (night)
+  // Package cost per day, by group size (adults + children aged 5 and above)
+  packageTiers: [
+    { upTo: 3,  perDay: 5500 },    // 1–3 people (priced for 2; a 3rd person shares a room)
+    { upTo: 6,  perDay: 7500 },    // 4–6 people
+    { upTo: 14, perDay: 9500 },    // 7–14 people
+    { upTo: 20, perDay: 11500 }    // 15–20 people
+  ],
+  maxPeople: 20,
+  children: { freeUnderAge: 5, maxFree: 2 },   // up to 2 children under 5 travel free
+  hotelsPerNight: {               // per room (2 people) per night
     "Budget": 1000,
     "2 star": 1500,
     "3 star": 3000,
     "4 star": 5000,
     "5 star": 10000
   },
-  driverOnlyPerDay: 2000,       // our driver for the customer's own car
-  addons: {
-    photographer: { label: "Trip photographer (DSLR photos)", perDay: 1499 },
-    drone: { label: "Drone shots (up to 10 shots a day)", perDay: 2500 }
-  }
+  driverOnlyPerDay: 2000,         // our driver for the customer's own car
+  addons: {                       // per day; bigger price when the group is larger
+    largeGroupFrom: 6,            // 6 or more people = large group price
+    photographer: { label: "Trip photographer (DSLR photos)", perDay: 1499, perDayLarge: 2999 },
+    drone: { label: "Drone shots (up to 10 shots a day)", perDay: 2499, perDayLarge: 4999 }
+  },
+  villa: { perNight: 9999, maxGuests: 8, transfer: 0 }   // transfer: 0 = Wai stand pickup & drop included
 };
 const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
 
@@ -383,7 +393,20 @@ const PACKAGES = [
       "Included: all viewpoint and forest entry fees, parking. Not included: boating, camera tripod fees where charged."
     ]
   },
-  /* ---------------- DRIVER-ONLY & CUSTOM ---------------- */
+  /* ---------------- VILLA, DRIVER-ONLY & CUSTOM ---------------- */
+  {
+    id: "pool-villa", group: "other", category: "Villa", kind: "villa", baseDays: 1,
+    name: "Pool Villa for Your Group",
+    summary: "Just want a private villa with a swimming pool for your gang? A pool villa for 7–8 people at ₹9,999 a night, with pickup from Wai bus stand to the villa and drop back to Wai.",
+    stay: "Private pool villa, up to 8 guests", walking: "None", bestFor: "Groups of 7–8 friends or family",
+    points: [
+      "A private villa with its own swimming pool, for up to 8 guests",
+      "₹9,999 per night for the villa",
+      "Pickup from Wai bus stand to the villa and drop back to Wai",
+      "Add a photographer or drone shots if you like",
+      "Villa house rules apply (quiet hours, pool timings, guest limit)"
+    ]
+  },
   {
     id: "driver-only", group: "other", category: "Driver", kind: "driver", baseDays: 1,
     name: "Driver for Your Car",
@@ -412,7 +435,7 @@ const PACKAGES = [
   }
 ];
 
-const GROUP_LABELS = { "2day": "2-day packages", "3day": "3-day packages", "special": "Special packages", "other": "Driver-only & custom trips" };
+const GROUP_LABELS = { "2day": "2-day packages", "3day": "3-day packages", "special": "Special packages", "other": "Pool villa, driver-only & custom trips" };
 
 /* Shared page behaviour: menu, year, contact details */
 document.addEventListener("DOMContentLoaded", () => {
@@ -434,30 +457,59 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-/* Price for a booking. hotel = key of PRICING.hotelsPerNight or "" for no hotel.
-   Package cost is per day; hotel is per stay (nights = days - 1); add-ons per day. */
-function calcPrice(p, days, hotel, addonKeys) {
+/* Booking price.
+   o = { days, people, rooms, hotel, addons }
+   - Packages: per-day cost by group size × days, plus hotel rate × rooms × stays (stays = days - 1).
+   - Villa: villa rate × nights (o.days = nights), plus transfer.
+   - Driver only: driver rate × days.
+   - Add-ons: per day, large-group price from PRICING.addons.largeGroupFrom people. */
+function tierRate(people) {
+  const t = PRICING.packageTiers.find(t => people <= t.upTo);
+  return t ? t.perDay : null;
+}
+function addonRate(key, people) {
+  const a = PRICING.addons[key];
+  return people >= PRICING.addons.largeGroupFrom ? a.perDayLarge : a.perDay;
+}
+function calcPrice(p, o) {
   if (!p || p.kind === "custom") return null;
-  days = Math.max(1, parseInt(days, 10) || p.baseDays || 1);
-  const lines = [];
-  if (p.kind === "driver") {
-    lines.push([`Driver: ${days} day${days > 1 ? "s" : ""} × ${inr(PRICING.driverOnlyPerDay)}`, PRICING.driverOnlyPerDay * days]);
+  const days = Math.max(1, parseInt(o.days, 10) || p.baseDays || 1);
+  const people = Math.max(1, parseInt(o.people, 10) || 2);
+  const s = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+  const lines = [], notes = [];
+  if (p.kind === "villa") {
+    if (people > PRICING.villa.maxGuests) return { error: `The pool villa takes up to ${PRICING.villa.maxGuests} guests. Choose "Build Your Own Trip" for bigger groups.` };
+    lines.push([`Pool villa: ${s(days, "night")} × ${inr(PRICING.villa.perNight)}`, PRICING.villa.perNight * days]);
+    if (PRICING.villa.transfer > 0) lines.push(["Wai stand pickup and drop", PRICING.villa.transfer]);
+    else notes.push("Pickup from Wai bus stand and drop back to Wai included.");
+  } else if (p.kind === "driver") {
+    lines.push([`Driver: ${s(days, "day")} × ${inr(PRICING.driverOnlyPerDay)}`, PRICING.driverOnlyPerDay * days]);
   } else {
-    lines.push([`Package: ${days} day${days > 1 ? "s" : ""} × ${inr(PRICING.packagePerDay)}`, PRICING.packagePerDay * days]);
-    const nights = days - 1;
-    const rate = PRICING.hotelsPerNight[hotel];
-    if (rate && nights > 0) lines.push([`${hotel} hotel: ${nights} stay${nights > 1 ? "s" : ""} × ${inr(rate)}`, rate * nights]);
+    if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, choose "Build Your Own Trip".` };
+    const rate = tierRate(people);
+    lines.push([`Package for ${people} ${people > 1 ? "people" : "person"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
+    const nights = days - 1, hr = PRICING.hotelsPerNight[o.hotel];
+    if (hr && nights > 0) {
+      const rooms = Math.max(1, parseInt(o.rooms, 10) || Math.ceil(people / 2));
+      lines.push([`${o.hotel} hotel: ${s(rooms, "room")} × ${s(nights, "stay")} × ${inr(hr)}`, hr * rooms * nights]);
+      const extra = people - rooms * 2;
+      if (extra > 0) notes.push(`${s(extra, "guest")} will share a room as a 3rd person. This depends on the hotel, and its extra-bed charge is added when we confirm.`);
+    }
+    if (people === 1) notes.push("Solo travellers pay the 2-person price, as the car, driver and room are the same.");
   }
-  (addonKeys || []).forEach(k => {
-    const a = PRICING.addons[k]; if (a) lines.push([`${a.label}: ${days} day${days > 1 ? "s" : ""} × ${inr(a.perDay)}`, a.perDay * days]);
+  (o.addons || []).forEach(k => {
+    const a = PRICING.addons[k]; if (!a) return;
+    const r = addonRate(k, people);
+    lines.push([`${a.label}: ${s(days, "day")} × ${inr(r)}`, r * days]);
   });
-  return { days, lines, total: lines.reduce((s, l) => s + l[1], 0) };
+  return { days, lines, notes, total: lines.reduce((t, l) => t + l[1], 0) };
 }
 function fromPrice(p) {
   if (p.kind === "custom") return "Price on request";
   if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
-  const r = calcPrice(p, p.baseDays, "Budget", []);
-  return `From ${inr(r.total)}`;
+  if (p.kind === "villa") return `${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests`;
+  const r = calcPrice(p, { days: p.baseDays, people: 2, rooms: 1, hotel: "Budget", addons: [] });
+  return `From ${inr(r.total)} for 2 people`;
 }
 
 function pkgLabel(p) {
