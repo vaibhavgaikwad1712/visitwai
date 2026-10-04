@@ -10,6 +10,27 @@ const SITE = {
   instagram: "visitwai"
 };
 
+
+/* =====================================================================
+   PRICES — change these numbers and every page and the booking form update.
+   ===================================================================== */
+const PRICING = {
+  packagePerDay: 5500,          // car, driver, fuel, tolls, parking, entry tickets, per day
+  hotelsPerNight: {             // hotel price per stay (night)
+    "Budget": 1000,
+    "2 star": 1500,
+    "3 star": 3000,
+    "4 star": 5000,
+    "5 star": 10000
+  },
+  driverOnlyPerDay: 2000,       // our driver for the customer's own car
+  addons: {
+    photographer: { label: "Trip photographer (DSLR photos)", perDay: 1499 },
+    drone: { label: "Drone shots (up to 10 shots a day)", perDay: 2500 }
+  }
+};
+const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+
 /* =====================================================================
    PACKAGES
    Each package has: id, group (2day / 3day / special), category,
@@ -19,7 +40,7 @@ const SITE = {
 const PACKAGES = [
   /* ---------------- 2-DAY ---------------- */
   {
-    id: "couples-2", group: "2day", category: "Couples",
+    id: "couples-2", group: "2day", category: "Couples", baseDays: 2,
     name: "Hills for Two",
     summary: "A private 2-day trip for couples with a verified driver, a couple-friendly hotel, sunset at Bombay Point and an optional Wilson Point sunrise.",
     stay: "1 night, couple-friendly hotel in Mahabaleshwar", walking: "Moderate", bestFor: "Couples, honeymooners",
@@ -53,7 +74,7 @@ const PACKAGES = [
     ]
   },
   {
-    id: "families-2", group: "2day", category: "Families",
+    id: "families-2", group: "2day", category: "Families", baseDays: 2,
     name: "Hills, Rides & Strawberries",
     summary: "Pony carts, an adventure park, the Wax Museum and Mapro's chocolate factory, with no early starts so kids can sleep in.",
     stay: "1 night, family room in Mahabaleshwar", walking: "Easy to moderate", bestFor: "Parents with kids",
@@ -82,7 +103,7 @@ const PACKAGES = [
     ]
   },
   {
-    id: "seniors-2", group: "2day", category: "Seniors",
+    id: "seniors-2", group: "2day", category: "Seniors", baseDays: 2,
     name: "Easy Hills with a Caretaker",
     summary: "A gentle trip for elders with a trained caretaker for both days. Every stop is close to parking, with rest after lunch and home before dark.",
     stay: "1 night, ground-floor or lift-access room", walking: "Very easy", bestFor: "Elderly couple + caretaker",
@@ -110,7 +131,7 @@ const PACKAGES = [
     ]
   },
   {
-    id: "groups-2", group: "2day", category: "Groups",
+    id: "groups-2", group: "2day", category: "Groups", baseDays: 2,
     name: "Adventure Weekend",
     summary: "Paragliding, go-karting, zip lines and a hotel bonfire, then a Wilson Point sunrise and the big Mahabaleshwar viewpoints.",
     stay: "1 night, shared rooms (2–4 per room)", walking: "Active", bestFor: "Friends, college and office groups",
@@ -144,7 +165,7 @@ const PACKAGES = [
 
   /* ---------------- 3-DAY ---------------- */
   {
-    id: "couples-3", group: "3day", category: "Couples",
+    id: "couples-3", group: "3day", category: "Couples", baseDays: 3,
     name: "Slow Hills for Two",
     summary: "Three relaxed days: Wai's ghats and Dhom Dam, the art and book villages of Panchgani, then a sunrise and a lake day at Tapola.",
     stay: "1 night Panchgani, 1 night Mahabaleshwar", walking: "Moderate", bestFor: "Couples wanting slower days",
@@ -183,7 +204,7 @@ const PACKAGES = [
     ]
   },
   {
-    id: "families-3", group: "3day", category: "Families",
+    id: "families-3", group: "3day", category: "Families", baseDays: 3,
     name: "Rides, Books & a Fort",
     summary: "An amusement park day, a storybook village, strawberry picking and Mapro, then the story of Shivaji Maharaj at Pratapgad Fort.",
     stay: "1 night Panchgani, 1 night Mahabaleshwar", walking: "Easy to moderate", bestFor: "Families with kids",
@@ -218,7 +239,7 @@ const PACKAGES = [
     ]
   },
   {
-    id: "seniors-3", group: "3day", category: "Seniors",
+    id: "seniors-3", group: "3day", category: "Seniors", baseDays: 3,
     name: "Unhurried Hills",
     summary: "Three slow days with one hotel for both nights, so nobody repacks. A caretaker all three days and rest at the hotel after every lunch.",
     stay: "2 nights, same Mahabaleshwar hotel, ground floor or lift", walking: "Very easy", bestFor: "Elderly couple + caretaker",
@@ -252,7 +273,7 @@ const PACKAGES = [
     notes: ["Pratapgad, Wilson Point sunrise and Tapola are left out on purpose: steep steps, early starts and long drives."]
   },
   {
-    id: "groups-3", group: "3day", category: "Groups",
+    id: "groups-3", group: "3day", category: "Groups", baseDays: 3,
     name: "Forts, Flying & Kayaks",
     summary: "A Pandavgad fort trek, Dhom water sports, paragliding and an adventure park, then Pratapgad Fort and kayaking at Tapola.",
     stay: "1 night Panchgani, 1 night Mahabaleshwar, shared rooms", walking: "High", bestFor: "Adventure groups",
@@ -288,7 +309,7 @@ const PACKAGES = [
 
   /* ---------------- SPECIAL ---------------- */
   {
-    id: "ancient-wai", group: "special", category: "Heritage",
+    id: "ancient-wai", group: "special", category: "Heritage", baseDays: 1,
     name: "Ancient Wai",
     summary: "A heritage trail through \"Dakshin Kashi\": the Krishna ghats and their temples, Peshwa-era Menavali, the Buddhist caves of Lohare and, on an optional second day, the source of the Krishna and Pratapgad Fort.",
     stay: "1 day, or 2 days with a night in Wai", walking: "Moderate", bestFor: "History and temple lovers",
@@ -324,7 +345,7 @@ const PACKAGES = [
     ]
   },
   {
-    id: "scenic-hidden", group: "special", category: "Scenic",
+    id: "scenic-hidden", group: "special", category: "Scenic", baseDays: 2,
     name: "Scenic & Hidden Places",
     summary: "Two days chasing light: misty river mornings, quiet backwaters, plateaus and caves, then the best sunrise and sunset edges of Mahabaleshwar, including points most tour cars skip.",
     stay: "1 night in Panchgani", walking: "Moderate to active", bestFor: "Photographers and nature lovers",
@@ -361,10 +382,37 @@ const PACKAGES = [
       "Your driver-guide may reorder the Mahabaleshwar points on the day depending on cloud cover; the stops stay the same.",
       "Included: all viewpoint and forest entry fees, parking. Not included: boating, camera tripod fees where charged."
     ]
+  },
+  /* ---------------- DRIVER-ONLY & CUSTOM ---------------- */
+  {
+    id: "driver-only", group: "other", category: "Driver", kind: "driver", baseDays: 1,
+    name: "Driver for Your Car",
+    summary: "Tired of driving, or new to ghat roads? We've got you covered. A local driver who knows the hills drives your own car, from just ₹2,000 a day.",
+    stay: "No stay included", walking: "Your choice", bestFor: "Families and friends travelling in their own car",
+    points: [
+      "An experienced local driver for your own car, for as many days as you need",
+      "₹2,000 per day, nothing more to pay for the driver",
+      "No need to pay for his food, unless you choose to offer it",
+      "Fuel, tolls and parking for your car are paid by you",
+      "Add a photographer or drone shots if you like",
+      "Your car needs valid RC, insurance and PUC papers"
+    ]
+  },
+  {
+    id: "custom", group: "other", category: "Custom", kind: "custom", baseDays: 2,
+    name: "Build Your Own Trip",
+    summary: "Want different places, more days, a special occasion or your own pace? Tell us what you have in mind and we'll plan the trip and send you a price.",
+    stay: "As you choose", walking: "As you choose", bestFor: "Anyone with their own plan",
+    points: [
+      "Pick the places, days, hotel type and pace you want",
+      "Add a photographer, drone shots or meals",
+      "Birthdays, anniversaries, office outings and school trips welcome",
+      "We reply with a plan and price, usually within a few hours"
+    ]
   }
 ];
 
-const GROUP_LABELS = { "2day": "2-day packages", "3day": "3-day packages", "special": "Special packages" };
+const GROUP_LABELS = { "2day": "2-day packages", "3day": "3-day packages", "special": "Special packages", "other": "Driver-only & custom trips" };
 
 /* Shared page behaviour: menu, year, contact details */
 document.addEventListener("DOMContentLoaded", () => {
@@ -385,7 +433,35 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-insta]").forEach(el => { el.href = "https://instagram.com/" + SITE.instagram; if (!el.hasAttribute("data-keep")) el.textContent = "@" + SITE.instagram; });
 });
 
+
+/* Price for a booking. hotel = key of PRICING.hotelsPerNight or "" for no hotel.
+   Package cost is per day; hotel is per stay (nights = days - 1); add-ons per day. */
+function calcPrice(p, days, hotel, addonKeys) {
+  if (!p || p.kind === "custom") return null;
+  days = Math.max(1, parseInt(days, 10) || p.baseDays || 1);
+  const lines = [];
+  if (p.kind === "driver") {
+    lines.push([`Driver: ${days} day${days > 1 ? "s" : ""} × ${inr(PRICING.driverOnlyPerDay)}`, PRICING.driverOnlyPerDay * days]);
+  } else {
+    lines.push([`Package: ${days} day${days > 1 ? "s" : ""} × ${inr(PRICING.packagePerDay)}`, PRICING.packagePerDay * days]);
+    const nights = days - 1;
+    const rate = PRICING.hotelsPerNight[hotel];
+    if (rate && nights > 0) lines.push([`${hotel} hotel: ${nights} stay${nights > 1 ? "s" : ""} × ${inr(rate)}`, rate * nights]);
+  }
+  (addonKeys || []).forEach(k => {
+    const a = PRICING.addons[k]; if (a) lines.push([`${a.label}: ${days} day${days > 1 ? "s" : ""} × ${inr(a.perDay)}`, a.perDay * days]);
+  });
+  return { days, lines, total: lines.reduce((s, l) => s + l[1], 0) };
+}
+function fromPrice(p) {
+  if (p.kind === "custom") return "Price on request";
+  if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
+  const r = calcPrice(p, p.baseDays, "Budget", []);
+  return `From ${inr(r.total)}`;
+}
+
 function pkgLabel(p) {
+  if (p.kind) return p.name;
   const len = p.group === "2day" ? "2-day" : p.group === "3day" ? "3-day" : (p.id === "ancient-wai" ? "1–2 days" : "2-day");
   return `${p.name} (${p.category}, ${len})`;
 }

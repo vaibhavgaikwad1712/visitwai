@@ -222,3 +222,26 @@ footer nav a{color:#E7EFE9}
 .terms-list li::before{content:counter(t);position:absolute;left:0;top:.85rem;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--forest);color:#fff;font-weight:700;display:grid;place-items:center;font-size:.95rem}
 .terms-list b{display:block;color:var(--forest)}
 .terms-list p{color:var(--soft)}
+
+/* prices and booking */
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem}
+.price-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.5rem}
+.price-card h3{font-size:1.35rem;margin-bottom:.5rem}
+.price-card .big{font-family:var(--display);font-size:2.6rem;color:var(--berry);line-height:1}
+table.mini{min-width:0;width:100%;background:transparent}
+table.mini td{padding:.4rem 0;border-bottom:1px dashed var(--line);font-size:.98rem}
+table.mini td:last-child{text-align:right;font-weight:700;white-space:nowrap;padding-left:.75rem}
+.pkg .price-tag{font-weight:700;color:var(--berry);font-size:1.1rem;margin-bottom:.9rem}
+.price-box{background:var(--card);border:2px solid var(--berry);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem}
+.price-box h3{font-size:1.5rem;margin-bottom:.5rem}
+.price-box .total{display:flex;justify-content:space-between;align-items:baseline;margin-top:.75rem;font-size:1.05rem}
+.price-box .total b{font-family:var(--display);font-weight:400;font-size:2.2rem;color:var(--berry)}
+fieldset.addons{border:1px solid var(--line);border-radius:12px;padding:.75rem 1rem;display:grid;gap:.5rem}
+fieldset.addons legend{font-weight:500;font-size:.95rem;padding:0 .3rem}
+.form-msg a{color:var(--river);font-weight:700}
+.itin .price-tag{font-weight:700;color:var(--berry);font-size:1.15rem;margin-bottom:.75rem}
+.itin-points{list-style:none;max-width:70ch;margin-bottom:1rem}
+.itin-points li{padding:.45rem 0 .45rem 1.6rem;position:relative;border-top:1px dashed var(--line)}
+.itin-points li::before{content:"✓";position:absolute;left:0;color:var(--forest);font-weight:700}
+
+[hidden]{display:none !important}

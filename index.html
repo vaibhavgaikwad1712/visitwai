@@ -21,9 +21,9 @@
         <li><a href="index.html" aria-current="page">Home</a></li>
         <li><a href="packages.html">Packages</a></li>
         <li><a href="places.html">Places to visit</a></li>
-        <li><a href="#included">What's included</a></li>
+        <li><a href="#prices">Prices</a></li>
         <li><a href="#reviews">Why us</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#contact">Book</a></li>
       </ul>
     </nav>
     <a href="#contact" class="btn">Book a trip</a>
@@ -55,8 +55,8 @@
       <ul>
         <li>Pickup and drop in Wai</li>
         <li>Stay, car and entry tickets included</li>
-        <li>Meals optional</li>
-        <li>10 packages, 1 to 3 days</li>
+        <li>Driver for your own car from ₹2,000 a day</li>
+        <li>Packages from ₹5,500 a day</li>
       </ul>
     </div>
   </div>
@@ -69,7 +69,30 @@
     </div>
   </section>
 
-  <section id="included" class="alt" aria-labelledby="inc-title">
+  <section id="prices" class="alt" aria-labelledby="pr-title">
+    <div class="wrap">
+      <h2 id="pr-title">Prices</h2>
+      <p class="lede">Every trip price has two parts: the package cost per day, plus your hotel for each night you stay. Choose your hotel type and add-ons in the booking form to see your exact total.</p>
+      <div class="price-grid">
+        <div class="price-card">
+          <h3>Package cost</h3>
+          <p class="big" id="pPkg"></p>
+          <p class="small">per day. Covers the AC car, driver, fuel, tolls, parking, tourist tax and entry tickets on the itinerary.</p>
+        </div>
+        <div class="price-card">
+          <h3>Hotel, per stay</h3>
+          <table class="mini" id="pHotels"></table>
+        </div>
+        <div class="price-card">
+          <h3>Add-ons and driver, per day</h3>
+          <table class="mini" id="pAddons"></table>
+        </div>
+      </div>
+      <p class="note" id="pExample"></p>
+    </div>
+  </section>
+
+  <section id="included" aria-labelledby="inc-title">
     <div class="wrap">
       <h2 id="inc-title">What's included</h2>
       <p class="lede">Sightseeing entry is part of the package price. Activities you choose on the day are paid at the venue. <a href="packages.html#fees">See approximate activity prices</a>.</p>
@@ -92,6 +115,7 @@
             <li>Paragliding, go-karting and amusement parks</li>
             <li>Strawberry picking and craft workshops</li>
             <li>Meals, unless you add the food option</li>
+            <li>Photographer and drone shots, unless you add them</li>
             <li>Camera fees, shopping and tips</li>
           </ul>
         </div>
@@ -99,7 +123,7 @@
     </div>
   </section>
 
-  <section aria-labelledby="safe-title">
+  <section class="alt" aria-labelledby="safe-title">
     <div class="wrap">
       <h2 id="safe-title">How we keep the trip safe</h2>
       <p class="lede">Most of our guests are first-time visitors to the hills. These are the things we do on every trip.</p>
@@ -114,7 +138,7 @@
 
 
 
-  <section id="reviews" class="alt" aria-labelledby="rv-title">
+  <section id="reviews" aria-labelledby="rv-title">
     <div class="wrap">
       <h2 id="rv-title">Why travel with Visit Wai</h2>
       <p class="lede">We're locals from Wai, and these are the things we promise on every trip.</p>
@@ -133,40 +157,41 @@
     </div>
   </section>
 
-  <section id="contact" aria-labelledby="ct-title">
+  <section id="contact" class="alt" aria-labelledby="ct-title">
     <div class="wrap">
-      <h2 id="ct-title">Plan your trip</h2>
-      <p class="lede">Send your dates and we'll reply with the price and availability within a few hours.</p>
+      <h2 id="ct-title">Book your trip</h2>
+      <p class="lede">Choose your package, hotel and add-ons to see the price, then send the booking. We'll call you to confirm availability and payment.</p>
       <div class="contact-grid">
-        <ul class="contact-list">
-          <li><span>Email</span><a data-email href="#"></a></li>
-          <li><span>Phone & WhatsApp</span><a data-phone href="#"></a></li>
-          <li><span>Instagram</span><a data-insta href="#" target="_blank" rel="noopener"></a></li>
-          <li><span>Based in</span><b>Wai, Satara district, Maharashtra</b></li>
-        </ul>
+        <div>
+          <div class="price-box" id="priceBox" aria-live="polite"></div>
+          <ul class="contact-list">
+            <li><span>Email</span><a data-email href="#"></a></li>
+            <li><span>Phone & WhatsApp</span><a data-phone href="#"></a></li>
+            <li><span>Instagram</span><a data-insta href="#" target="_blank" rel="noopener"></a></li>
+            <li><span>Based in</span><b>Wai, Satara district, Maharashtra</b></li>
+          </ul>
+        </div>
 
         <form id="enquiry" novalidate>
           <div class="row">
             <label>Your name<input name="name" required autocomplete="name"></label>
             <label>Phone<input name="phone" type="tel" required autocomplete="tel"></label>
           </div>
+          <label>Email (optional)<input name="email" type="email" autocomplete="email"></label>
           <label>Package<select name="package" id="pkgSelect"></select></label>
-          <label>Hotel required
-            <select name="hotel" required>
-              <option value="">Choose hotel type</option>
-              <option>Budget</option>
-              <option>Hostel</option>
-              <option>2 star</option>
-              <option>3 star</option>
-              <option>4 star</option>
-              <option>5 star</option>
-              <option>No hotel needed (day trip)</option>
-            </select>
-          </label>
           <div class="row">
             <label>Travel date<input name="date" type="date"></label>
-            <label>Number of people<input name="people" type="number" min="1" max="17" value="2"></label>
+            <label>Number of days<input name="days" id="daysInput" type="number" min="1" max="15" value="2"></label>
           </div>
+          <label id="hotelWrap">Hotel required
+            <select name="hotel" id="hotelSelect"></select>
+          </label>
+          <label>Number of people<input name="people" type="number" min="1" max="17" value="2"></label>
+          <fieldset class="addons">
+            <legend>Add-ons</legend>
+            <label class="check-terms"><input type="checkbox" name="addon" value="photographer"><span id="lblPhoto"></span></label>
+            <label class="check-terms"><input type="checkbox" name="addon" value="drone"><span id="lblDrone"></span></label>
+          </fieldset>
           <label>Food preference
             <select name="food">
               <option>No meals, we'll manage</option>
@@ -176,10 +201,10 @@
               <option>Senior-friendly meals</option>
             </select>
           </label>
-          <label>Anything we should know?<textarea name="notes" placeholder="Pickup point, medical needs, special occasion…"></textarea></label>
+          <label id="notesLabel">Anything we should know?<textarea name="notes" placeholder="Pickup point, medical needs, special occasion…"></textarea></label>
           <label class="check-terms"><input type="checkbox" name="terms" id="terms" required>
             <span>I have read and accept the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions, Code of Conduct and Cancellation Policy</a>.</span></label>
-          <button type="submit" class="btn">Send enquiry</button>
+          <button type="submit" class="btn" id="submitBtn">Book now</button>
           <p class="form-msg" id="formMsg" role="status"></p>
         </form>
       </div>
@@ -198,56 +223,137 @@
 
 <script src="data.js"></script>
 <script>
-  /* Package cards, grouped */
+  /* ---------- Package cards ---------- */
   const groupsEl = document.getElementById('pkgGroups');
-  ["2day", "3day", "special"].forEach(g => {
+  ["2day", "3day", "special", "other"].forEach(g => {
     const h = document.createElement('h3');
     h.className = 'group-title'; h.textContent = GROUP_LABELS[g];
     const grid = document.createElement('div'); grid.className = 'packages';
     PACKAGES.filter(p => p.group === g).forEach(p => {
       const a = document.createElement('article');
-      a.className = 'pkg' + (g === 'special' ? ' special' : '');
-      a.innerHTML = `<span class="who"></span><h3></h3><p></p>
+      a.className = 'pkg' + (g === 'special' || g === 'other' ? ' special' : '');
+      a.innerHTML = `<span class="who"></span><h3></h3><p class="sum"></p>
         ${p.cardNote ? '<p class="card-note"></p>' : ''}
         <dl><dt>Stay</dt><dd class="s"></dd><dt>Walking</dt><dd class="w"></dd></dl>
+        <p class="price-tag"></p>
         <div class="card-actions">
-          <a class="btn small-btn" href="#contact" data-pkg="${p.id}">Enquire</a>
-          <a class="btn ghost small-btn" href="packages.html#${p.id}">See itinerary</a>
+          <a class="btn small-btn" href="#contact" data-pkg="${p.id}">${p.kind === 'custom' ? 'Get a quote' : 'Book'}</a>
+          <a class="btn ghost small-btn" href="packages.html#${p.id}">${p.kind ? 'Details' : 'See itinerary'}</a>
         </div>`;
-      a.querySelector('.who').textContent = g === 'special' ? 'Special package' : `For ${p.category.toLowerCase()}`;
+      a.querySelector('.who').textContent = g === 'other' ? (p.kind === 'driver' ? 'Driver only' : 'Custom trip') : g === 'special' ? 'Special package' : `For ${p.category.toLowerCase()}`;
       a.querySelector('h3').textContent = p.name;
-      a.querySelector('p').textContent = p.summary;
+      a.querySelector('.sum').textContent = p.summary;
       if (p.cardNote) a.querySelector('.card-note').textContent = p.cardNote;
       a.querySelector('.s').textContent = p.stay;
       a.querySelector('.w').textContent = p.walking;
+      a.querySelector('.price-tag').textContent = fromPrice(p);
       grid.appendChild(a);
     });
     groupsEl.append(h, grid);
   });
 
-  /* Enquiry form package list */
+  /* ---------- Prices section ---------- */
+  document.getElementById('pPkg').textContent = inr(PRICING.packagePerDay);
+  document.getElementById('pHotels').innerHTML = Object.entries(PRICING.hotelsPerNight)
+    .map(([k, v]) => `<tr><td>${k}</td><td>${inr(v)}</td></tr>`).join('');
+  document.getElementById('pAddons').innerHTML = Object.values(PRICING.addons)
+    .map(a => `<tr><td>${a.label}</td><td>${inr(a.perDay)}</td></tr>`).join('') +
+    `<tr><td>Driver for your own car</td><td>${inr(PRICING.driverOnlyPerDay)}</td></tr>`;
+  const ex = calcPrice(PACKAGES.find(p => p.id === 'couples-3'), 3, '3 star', []);
+  document.getElementById('pExample').textContent =
+    `Example: a 3-day trip with a 3 star hotel = 3 days × ${inr(PRICING.packagePerDay)} + 2 stays × ${inr(PRICING.hotelsPerNight['3 star'])} = ${inr(ex.total)}. A 1-day trip has no hotel stay.`;
+
+  /* ---------- Booking form ---------- */
+  const form = document.getElementById('enquiry');
   const sel = document.getElementById('pkgSelect');
+  const hotelSel = document.getElementById('hotelSelect');
+  const daysIn = document.getElementById('daysInput');
+  const box = document.getElementById('priceBox');
+  document.getElementById('lblPhoto').textContent = `${PRICING.addons.photographer.label}, ${inr(PRICING.addons.photographer.perDay)} per day`;
+  document.getElementById('lblDrone').textContent = `${PRICING.addons.drone.label}, ${inr(PRICING.addons.drone.perDay)} per day`;
+
   PACKAGES.forEach(p => sel.add(new Option(pkgLabel(p), p.id)));
-  sel.add(new Option("Not sure yet, help me choose", "not-sure"));
+  hotelSel.add(new Option('Choose hotel type', ''));
+  Object.entries(PRICING.hotelsPerNight).forEach(([k, v]) => hotelSel.add(new Option(`${k}, ${inr(v)} per stay`, k)));
+  hotelSel.add(new Option('No hotel needed (I have my own stay)', 'none'));
+
+  const current = () => PACKAGES.find(p => p.id === sel.value);
+  const addonKeys = () => [...form.querySelectorAll('input[name=addon]:checked')].map(i => i.value);
+
+  function onPackageChange(setDays) {
+    const p = current();
+    if (setDays) daysIn.value = p.baseDays;
+    daysIn.min = p.kind || p.id === 'ancient-wai' ? 1 : p.baseDays;
+    document.getElementById('hotelWrap').hidden = p.kind === 'driver';
+    update();
+  }
+  function update() {
+    const p = current();
+    const days = Math.max(parseInt(daysIn.value, 10) || 1, parseInt(daysIn.min, 10) || 1);
+    if (p.kind === 'custom') {
+      box.innerHTML = '<h3>Custom trip</h3><p>Tell us your plan in the notes and we\'ll send you a price.</p>';
+      return;
+    }
+    const hotel = p.kind === 'driver' ? '' : hotelSel.value;
+    const r = calcPrice(p, days, hotel === 'none' ? '' : hotel, addonKeys());
+    let note = '';
+    if (!p.kind && !hotel && days > 1) note = '<p class="small">Choose a hotel type to add your stay.</p>';
+    if (days === 1 && !p.kind) note = '<p class="small">1-day trip: no hotel stay.</p>';
+    box.innerHTML = `<h3>Your price</h3><table class="mini">${r.lines.map(l => `<tr><td></td><td>${inr(l[1])}</td></tr>`).join('')}</table>
+      <p class="total">Total <b>${inr(r.total)}</b></p>${note}`;
+    box.querySelectorAll('td:first-child').forEach((td, i) => td.textContent = r.lines[i][0]);
+  }
+  sel.addEventListener('change', () => onPackageChange(true));
+  [hotelSel, daysIn].forEach(el => el.addEventListener('input', update));
+  form.querySelectorAll('input[name=addon]').forEach(el => el.addEventListener('change', update));
   document.addEventListener('click', e => {
-    const b = e.target.closest('[data-pkg]'); if (b) sel.value = b.dataset.pkg;
+    const b = e.target.closest('[data-pkg]'); if (b) { sel.value = b.dataset.pkg; onPackageChange(true); }
   });
   const wanted = new URLSearchParams(location.search).get('pkg');
-  if (wanted && PACKAGES.some(p => p.id === wanted)) sel.value = wanted;
+  sel.value = PACKAGES.some(p => p.id === wanted) ? wanted : PACKAGES[0].id;
+  onPackageChange(true);
 
-  /* Form opens the visitor's email app with the enquiry filled in */
-  document.getElementById('enquiry').addEventListener('submit', e => {
+  /* ---------- Send booking ----------
+     Sent straight to SITE.email through FormSubmit (formsubmit.co).
+     The very first booking sends an activation email to that inbox: click "Activate" once. */
+  form.addEventListener('submit', async e => {
     e.preventDefault();
-    const f = e.target, msg = document.getElementById('formMsg');
-    if (!f.name.value.trim() || !f.phone.value.trim()) {
-      msg.textContent = 'Add your name and phone number so we can reply.'; return;
-    }
-    if (!f.hotel.value) { msg.textContent = 'Choose the hotel type you need.'; f.hotel.focus(); return; }
-    if (!f.terms.checked) { msg.textContent = 'Please tick the box to accept the Terms & Conditions before sending.'; f.terms.focus(); return; }
-    const pkgText = sel.options[sel.selectedIndex].text;
-    const body = `Name: ${f.name.value}\nPhone: ${f.phone.value}\nPackage: ${pkgText}\nHotel: ${f.hotel.value}\nDate: ${f.date.value || 'Not decided'}\nPeople: ${f.people.value}\nFood: ${f.food.value}\nNotes: ${f.notes.value}\nTerms & Conditions accepted: Yes`;
-    location.href = `mailto:${SITE.email}?subject=${encodeURIComponent('Trip enquiry: ' + pkgText)}&body=${encodeURIComponent(body)}`;
-    msg.textContent = 'Your email app is opening with the enquiry filled in. Press send there.';
+    const f = form, msg = document.getElementById('formMsg'), btn = document.getElementById('submitBtn');
+    const p = current();
+    if (!f.name.value.trim() || !f.phone.value.trim()) { msg.textContent = 'Add your name and phone number so we can reach you.'; return; }
+    if (!p.kind && !hotelSel.value) { msg.textContent = 'Choose the hotel type you need.'; hotelSel.focus(); return; }
+    if (!f.terms.checked) { msg.textContent = 'Please tick the box to accept the Terms & Conditions before booking.'; f.terms.focus(); return; }
+
+    const days = Math.max(parseInt(daysIn.value, 10) || 1, parseInt(daysIn.min, 10) || 1);
+    const hotel = p.kind === 'driver' ? 'Not applicable' : (hotelSel.value === 'none' ? 'No hotel needed' : hotelSel.value || 'Not chosen');
+    const r = calcPrice(p, days, hotelSel.value === 'none' ? '' : hotelSel.value, addonKeys());
+    const addonText = addonKeys().map(k => PRICING.addons[k].label).join(', ') || 'None';
+    const data = {
+      _subject: `New booking: ${p.name} (${days} day${days > 1 ? 's' : ''})`,
+      _template: 'table',
+      _captcha: 'false',
+      Name: f.name.value, Phone: f.phone.value, Email: f.email.value || 'Not given',
+      Package: pkgLabel(p), 'Travel date': f.date.value || 'Not decided', Days: days,
+      Hotel: hotel, People: f.people.value, 'Add-ons': addonText, Food: f.food.value,
+      'Price shown': r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).join(' | ') + ` | TOTAL ${inr(r.total)}` : 'Custom trip: quote needed',
+      Notes: f.notes.value || '-', 'Terms accepted': 'Yes'
+    };
+    btn.disabled = true; msg.textContent = 'Sending your booking…';
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/' + SITE.email, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('send failed');
+      form.reset(); sel.value = p.id; onPackageChange(true);
+      msg.innerHTML = 'Booking sent! We\'ll call you soon to confirm. <a data-wa-msg href="#">Also message us on WhatsApp</a>';
+    } catch (err) {
+      const body = Object.entries(data).filter(([k]) => !k.startsWith('_')).map(([k, v]) => `${k}: ${v}`).join('\n');
+      location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(data._subject)}&body=${encodeURIComponent(body)}`;
+      msg.textContent = 'We couldn\'t send it automatically, so your email app is opening with the booking filled in. Please press send there.';
+    } finally { btn.disabled = false; }
+    const wa = msg.querySelector('[data-wa-msg]');
+    if (wa) wa.href = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent('Hi Visit Wai, I just booked ' + data.Package + ' for ' + data['Travel date'] + '. My name is ' + data.Name + '.')}`;
   });
 </script>
 </body>

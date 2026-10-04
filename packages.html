@@ -35,7 +35,7 @@
   <section class="hero page-hero" aria-labelledby="hero-title">
     <div class="wrap">
       <h1 id="hero-title">Packages & itineraries</h1>
-      <p>Hour-by-hour plans for all 10 trips. Timings are approximate and adjust to traffic, weather and your pace.</p>
+      <p>Hour-by-hour plans for every trip, plus our driver-only and custom options. Timings are approximate and adjust to traffic, weather and your pace.</p>
     </div>
     <svg class="ridges" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
       <path class="r2" d="M0 60 L150 20 L290 55 L420 15 L560 50 L700 18 L840 55 L990 12 L1130 48 L1290 20 L1440 50 V120 H0Z"/>
@@ -55,6 +55,7 @@
         <button class="chip" data-f="Seniors" aria-pressed="false">Seniors</button>
         <button class="chip" data-f="Groups" aria-pressed="false">Groups</button>
         <button class="chip" data-f="special" aria-pressed="false">Special</button>
+        <button class="chip" data-f="other" aria-pressed="false">Driver & custom</button>
       </div>
       <div id="itins"></div>
     </div>
@@ -123,6 +124,8 @@
             <tr><td>Devrai craft workshop</td><td class="no">Not included</td><td>Ask on site</td></tr>
             <tr><td>Mapro Garden</td><td>Free entry</td><td>Food and products extra</td></tr>
             <tr><td>Bhilar Book Village</td><td>Free</td><td>–</td></tr>
+            <tr><td>Trip photographer (DSLR photos)</td><td class="no">Optional add-on</td><td>1,499 per day</td></tr>
+            <tr><td>Drone shots (up to 10 shots a day)</td><td class="no">Optional add-on</td><td>2,500 per day</td></tr>
             <tr><td>Kaas Plateau (add-on)</td><td class="no">Not included</td><td>About 100–150, book online</td></tr>
           </tbody>
         </table>
@@ -170,8 +173,9 @@
     s.className = 'itin' + (p.group === 'special' ? ' special' : '');
     s.id = p.id;
     s.dataset.group = p.group; s.dataset.cat = p.category;
-    const who = p.group === 'special' ? 'Special package' : `${p.group === '2day' ? '2-day' : '3-day'} package for ${p.category.toLowerCase()}`;
-    const days = p.days.map(d => `
+    const who = p.group === 'other' ? (p.kind === 'driver' ? 'Driver only' : 'Custom trip') : p.group === 'special' ? 'Special package' : `${p.group === '2day' ? '2-day' : '3-day'} package for ${p.category.toLowerCase()}`;
+    const points = p.points ? `<ul class="itin-points">${p.points.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
+    const days = (p.days || []).map(d => `
       <h4 class="day-title">${esc(d.title)}</h4>
       <div class="table-wrap"><table class="day-table">
         <thead><tr><th>Time</th><th>Stop</th><th>What to do</th></tr></thead>
@@ -181,16 +185,17 @@
     s.innerHTML = `
       <div class="itin-head">
         <div><span class="who">${esc(who)}</span><h3>${esc(p.name)}</h3></div>
-        <a class="btn" href="index.html?pkg=${p.id}#contact">Enquire about this trip</a>
+        <a class="btn" href="index.html?pkg=${p.id}#contact">${p.kind === 'custom' ? 'Get a quote' : 'Book this trip'}</a>
       </div>
       <p class="summary">${esc(p.summary)}</p>
+      <p class="price-tag">${esc(fromPrice(p))}</p>
       <div class="meta">
         <div><span>Best for</span> <b>${esc(p.bestFor)}</b></div>
         <div><span>Stay</span> <b>${esc(p.stay)}</b></div>
         <div><span>Walking</span> <b>${esc(p.walking)}</b></div>
         ${p.extra ? `<div><b>${esc(p.extra)}</b></div>` : ''}
       </div>
-      ${days}${notes}`;
+      ${points}${days}${notes}`;
     host.appendChild(s);
   });
 
