@@ -12,10 +12,11 @@ const SITE = {
 
 
 /* =====================================================================
-   PRICES — change these numbers and every page and the booking form update.
+   PRICES — change these numbers and every page and booking form update.
    ===================================================================== */
 const PRICING = {
-  // Package cost per day, by group size (adults + children aged 5 and above)
+  // Package cost per day, by group size (adults + children aged 5 and above).
+  // A budget stay (worth ₹1,000 per room per night) is INCLUDED in this price.
   packageTiers: [
     { upTo: 3,  perDay: 5500 },    // 1–3 people (priced for 2; a 3rd person shares a room)
     { upTo: 6,  perDay: 7500 },    // 4–6 people
@@ -24,22 +25,38 @@ const PRICING = {
   ],
   maxPeople: 20,
   children: { freeUnderAge: 5, maxFree: 2 },   // up to 2 children under 5 travel free
-  hotelsPerNight: {               // per room (2 people) per night
+  includedHotel: "Budget",          // this hotel type is included in the package price
+  hotelsPerNight: {                 // value of each hotel type, per room (2 people) per night
     "Budget": 1000,
     "2 star": 1500,
     "3 star": 3000,
     "4 star": 5000,
     "5 star": 10000
   },
-  driverOnlyPerDay: 2000,         // our driver for the customer's own car
-  addons: {                       // per day; bigger price when the group is larger
-    largeGroupFrom: 6,            // 6 or more people = large group price
+  driverOnlyPerDay: 1999,           // our driver for the customer's own car
+  addons: {                         // per day; larger price from largeGroupFrom people
+    largeGroupFrom: 6,
     photographer: { label: "Trip photographer (DSLR photos)", perDay: 1499, perDayLarge: 2999 },
-    drone: { label: "Drone shots (up to 10 shots a day)", perDay: 2499, perDayLarge: 4999 }
+    drone: { label: "Drone shots (up to 10 shots a day)", perDay: 2499, perDayLarge: 4999 },
+    caretaker: { label: "Caretaker for elders", perDay: 999, perDayLarge: 999, onlyFor: ["seniors-2", "seniors-3"] }
   },
   villa: { perNight: 9999, maxGuests: 8, transfer: 0 }   // transfer: 0 = Wai stand pickup & drop included
 };
 const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+
+/* =====================================================================
+   GOOGLE FORM — bookings are saved to your Google Form (and its Sheet).
+   Fill in formId and each entry number from your form's pre-filled link.
+   While formId is empty, bookings are emailed through FormSubmit instead.
+   ===================================================================== */
+const GOOGLE_FORM = {
+  formId: "",                 // the long ID in .../forms/d/e/THIS_PART/viewform
+  fields: {                   // entry numbers, e.g. "entry.123456789"
+    name: "", phone: "", email: "", package: "", date: "", days: "", people: "",
+    children: "", hotel: "", rooms: "", addons: "", food: "", total: "", breakdown: "", notes: "", terms: ""
+  },
+  alsoEmail: true             // also send a full-detail booking email to SITE.email
+};
 
 /* =====================================================================
    PACKAGES
@@ -114,12 +131,12 @@ const PACKAGES = [
   },
   {
     id: "seniors-2", group: "2day", category: "Seniors", baseDays: 2,
-    name: "Easy Hills with a Caretaker",
-    summary: "A gentle trip for elders with a trained caretaker for both days. Every stop is close to parking, with rest after lunch and home before dark.",
-    stay: "1 night, ground-floor or lift-access room", walking: "Very easy", bestFor: "Elderly couple + caretaker",
+    name: "Easy Hills for Elders",
+    summary: "A gentle trip for elders, with an optional caretaker for just ₹999 a day. Every stop is close to parking, with rest after lunch and home before dark.",
+    stay: "1 night, ground-floor or lift-access room", walking: "Very easy", bestFor: "Elderly couples, with or without a caretaker",
     days: [
       { title: "Day 1: Wai → Panchgani → Mahabaleshwar", stops: [
-        ["9:00 am", "Dholya Ganpati, Wai", "Darshan; caretaker helps on the ghat steps"],
+        ["9:00 am", "Dholya Ganpati, Wai", "Darshan; help on the ghat steps"],
         ["10:00 am", "Pasarni Ghat", "View from the car or a roadside stop"],
         ["10:45 am", "Sydney Point", "Short walk from parking"],
         ["11:45 am", "Parsi Point", "Roadside viewpoint, seating"],
@@ -251,8 +268,8 @@ const PACKAGES = [
   {
     id: "seniors-3", group: "3day", category: "Seniors", baseDays: 3,
     name: "Unhurried Hills",
-    summary: "Three slow days with one hotel for both nights, so nobody repacks. A caretaker all three days and rest at the hotel after every lunch.",
-    stay: "2 nights, same Mahabaleshwar hotel, ground floor or lift", walking: "Very easy", bestFor: "Elderly couple + caretaker",
+    summary: "Three slow days with one hotel for both nights, so nobody repacks, and rest at the hotel after every lunch. Add a caretaker for just ₹999 a day.",
+    stay: "2 nights, same Mahabaleshwar hotel, ground floor or lift", walking: "Very easy", bestFor: "Elderly couples, with or without a caretaker",
     days: [
       { title: "Day 1: Wai → Mahabaleshwar", stops: [
         ["9:30 am", "Dholya Ganpati, Wai", "Darshan"],
@@ -410,11 +427,11 @@ const PACKAGES = [
   {
     id: "driver-only", group: "other", category: "Driver", kind: "driver", baseDays: 1,
     name: "Driver for Your Car",
-    summary: "Tired of driving, or new to ghat roads? We've got you covered. A local driver who knows the hills drives your own car, from just ₹2,000 a day.",
+    summary: "Tired of driving, or new to ghat roads? We've got you covered. A local driver who knows the hills drives your own car, from just ₹1,999 a day.",
     stay: "No stay included", walking: "Your choice", bestFor: "Families and friends travelling in their own car",
     points: [
       "An experienced local driver for your own car, for as many days as you need",
-      "₹2,000 per day, nothing more to pay for the driver",
+      "₹1,999 per day, nothing more to pay for the driver",
       "No need to pay for his food, unless you choose to offer it",
       "Fuel, tolls and parking for your car are paid by you",
       "Add a photographer or drone shots if you like",
@@ -437,6 +454,104 @@ const PACKAGES = [
 
 const GROUP_LABELS = { "2day": "2-day packages", "3day": "3-day packages", "special": "Special packages", "other": "Pool villa, driver-only & custom trips" };
 
+/* Each package has its own page: trip-<id>.html */
+const pkgPage = p => `trip-${p.id}.html`;
+
+/* What every package includes / excludes (shown on each package page) */
+function includesFor(p) {
+  if (p.kind === "villa") return {
+    yes: ["Private pool villa for up to 8 guests", "Pickup from Wai bus stand to the villa and drop back to Wai"],
+    no: ["Food and drinks, unless arranged with the villa", "Sightseeing and activities", "Photographer, drone and other add-ons unless selected"]
+  };
+  if (p.kind === "driver") return {
+    yes: ["An experienced local driver for your own car", "No food charges for the driver, unless you choose to offer it"],
+    no: ["Fuel, tolls and parking for your car", "Hotel stay and entry tickets", "Add-ons unless selected"]
+  };
+  if (p.kind === "custom") return {
+    yes: ["A trip planned around your places, days, pace and budget"],
+    no: ["Price is sent to you after we plan the trip"]
+  };
+  const yes = [
+    "AC car with an experienced local driver",
+    "Fuel, tolls, parking and driver allowance",
+    "Municipal tourist tax at Panchgani and Mahabaleshwar",
+    "Entry tickets for viewpoints, temples and heritage sites on the itinerary"
+  ];
+  if (p.baseDays > 1) yes.splice(1, 0, `Budget hotel stay included (worth ${inr(PRICING.hotelsPerNight[PRICING.includedHotel])} per room per night); upgrade to 2–5 star if you like`);
+  if (p.id === "ancient-wai") yes.push("Local history guide on Day 1");
+  const no = ["Boating, rides, paragliding and amusement parks", "Meals, unless you choose them", "Photographer, drone" + (p.category === "Seniors" ? ", caretaker" : "") + " unless selected", "Camera fees, shopping and tips"];
+  return { yes, no };
+}
+
+/* Price maths.
+   o = { days, people, rooms, hotel, addons }
+   - Packages: per-day cost for the group size × days (budget stay included),
+     plus any hotel upgrade: (chosen rate − budget rate) × rooms × nights.
+   - Villa: villa rate × nights (o.days = nights), plus transfer if set.
+   - Driver only: driver rate × days.
+   - Add-ons: per day, larger price from PRICING.addons.largeGroupFrom people. */
+function tierRate(people) {
+  const t = PRICING.packageTiers.find(t => people <= t.upTo);
+  return t ? t.perDay : null;
+}
+function addonRate(key, people) {
+  const a = PRICING.addons[key];
+  return people >= PRICING.addons.largeGroupFrom ? a.perDayLarge : a.perDay;
+}
+function addonsFor(p) {
+  return Object.keys(PRICING.addons).filter(k => k !== "largeGroupFrom" && (!PRICING.addons[k].onlyFor || PRICING.addons[k].onlyFor.includes(p.id)));
+}
+function hotelUpgrade(hotel) {
+  const r = PRICING.hotelsPerNight[hotel], base = PRICING.hotelsPerNight[PRICING.includedHotel];
+  return r ? Math.max(0, r - base) : 0;
+}
+function calcPrice(p, o) {
+  if (!p || p.kind === "custom") return null;
+  const days = Math.max(1, parseInt(o.days, 10) || p.baseDays || 1);
+  const people = Math.max(1, parseInt(o.people, 10) || 2);
+  const s = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+  const lines = [], notes = [];
+  if (p.kind === "villa") {
+    if (people > PRICING.villa.maxGuests) return { error: `The pool villa takes up to ${PRICING.villa.maxGuests} guests. Choose "Build Your Own Trip" for bigger groups.` };
+    lines.push([`Pool villa: ${s(days, "night")} × ${inr(PRICING.villa.perNight)}`, PRICING.villa.perNight * days]);
+    if (PRICING.villa.transfer > 0) lines.push(["Wai stand pickup and drop", PRICING.villa.transfer]);
+    else notes.push("Pickup from Wai bus stand and drop back to Wai included.");
+  } else if (p.kind === "driver") {
+    lines.push([`Driver: ${s(days, "day")} × ${inr(PRICING.driverOnlyPerDay)}`, PRICING.driverOnlyPerDay * days]);
+  } else {
+    if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, choose "Build Your Own Trip".` };
+    const rate = tierRate(people), nights = days - 1;
+    lines.push([`Package for ${people} ${people > 1 ? "people" : "person"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
+    if (nights > 0 && o.hotel !== "none") {
+      const rooms = Math.max(1, parseInt(o.rooms, 10) || Math.ceil(people / 2));
+      const up = hotelUpgrade(o.hotel);
+      if (up > 0) lines.push([`${o.hotel} upgrade: ${s(rooms, "room")} × ${s(nights, "night")} × ${inr(up)}`, up * rooms * nights]);
+      else notes.push(`Budget hotel stay included: ${s(rooms, "room")} for ${s(nights, "night")}.`);
+      const extra = people - rooms * 2;
+      if (extra > 0) notes.push(`${s(extra, "guest")} will share a room as a 3rd person. This depends on the hotel, and its extra-bed charge is added when we confirm.`);
+    }
+    if (people === 1) notes.push("Solo travellers pay the 2-person price, as the car, driver and room are the same.");
+  }
+  (o.addons || []).forEach(k => {
+    const a = PRICING.addons[k]; if (!a) return;
+    const r = addonRate(k, people);
+    lines.push([`${a.label}: ${s(days, "day")} × ${inr(r)}`, r * days]);
+  });
+  return { days, lines, notes, total: lines.reduce((t, l) => t + l[1], 0) };
+}
+function fromPrice(p) {
+  if (p.kind === "custom") return "Price on request";
+  if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
+  if (p.kind === "villa") return `${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests`;
+  const r = calcPrice(p, { days: p.baseDays, people: 2, rooms: 1, hotel: PRICING.includedHotel, addons: [] });
+  return `From ${inr(r.total)} for 2 people` + (p.baseDays > 1 ? ", stay included" : "");
+}
+function pkgLabel(p) {
+  if (p.kind) return p.name;
+  const len = p.group === "2day" ? "2-day" : p.group === "3day" ? "3-day" : (p.id === "ancient-wai" ? "1–2 days" : "2-day");
+  return `${p.name} (${p.category}, ${len})`;
+}
+
 /* Shared page behaviour: menu, year, contact details */
 document.addEventListener("DOMContentLoaded", () => {
   const menuBtn = document.getElementById("menuBtn"), nav = document.getElementById("nav");
@@ -455,65 +570,3 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-wa]").forEach(el => el.href = "https://wa.me/" + SITE.whatsapp);
   document.querySelectorAll("[data-insta]").forEach(el => { el.href = "https://instagram.com/" + SITE.instagram; if (!el.hasAttribute("data-keep")) el.textContent = "@" + SITE.instagram; });
 });
-
-
-/* Booking price.
-   o = { days, people, rooms, hotel, addons }
-   - Packages: per-day cost by group size × days, plus hotel rate × rooms × stays (stays = days - 1).
-   - Villa: villa rate × nights (o.days = nights), plus transfer.
-   - Driver only: driver rate × days.
-   - Add-ons: per day, large-group price from PRICING.addons.largeGroupFrom people. */
-function tierRate(people) {
-  const t = PRICING.packageTiers.find(t => people <= t.upTo);
-  return t ? t.perDay : null;
-}
-function addonRate(key, people) {
-  const a = PRICING.addons[key];
-  return people >= PRICING.addons.largeGroupFrom ? a.perDayLarge : a.perDay;
-}
-function calcPrice(p, o) {
-  if (!p || p.kind === "custom") return null;
-  const days = Math.max(1, parseInt(o.days, 10) || p.baseDays || 1);
-  const people = Math.max(1, parseInt(o.people, 10) || 2);
-  const s = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
-  const lines = [], notes = [];
-  if (p.kind === "villa") {
-    if (people > PRICING.villa.maxGuests) return { error: `The pool villa takes up to ${PRICING.villa.maxGuests} guests. Choose "Build Your Own Trip" for bigger groups.` };
-    lines.push([`Pool villa: ${s(days, "night")} × ${inr(PRICING.villa.perNight)}`, PRICING.villa.perNight * days]);
-    if (PRICING.villa.transfer > 0) lines.push(["Wai stand pickup and drop", PRICING.villa.transfer]);
-    else notes.push("Pickup from Wai bus stand and drop back to Wai included.");
-  } else if (p.kind === "driver") {
-    lines.push([`Driver: ${s(days, "day")} × ${inr(PRICING.driverOnlyPerDay)}`, PRICING.driverOnlyPerDay * days]);
-  } else {
-    if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, choose "Build Your Own Trip".` };
-    const rate = tierRate(people);
-    lines.push([`Package for ${people} ${people > 1 ? "people" : "person"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
-    const nights = days - 1, hr = PRICING.hotelsPerNight[o.hotel];
-    if (hr && nights > 0) {
-      const rooms = Math.max(1, parseInt(o.rooms, 10) || Math.ceil(people / 2));
-      lines.push([`${o.hotel} hotel: ${s(rooms, "room")} × ${s(nights, "stay")} × ${inr(hr)}`, hr * rooms * nights]);
-      const extra = people - rooms * 2;
-      if (extra > 0) notes.push(`${s(extra, "guest")} will share a room as a 3rd person. This depends on the hotel, and its extra-bed charge is added when we confirm.`);
-    }
-    if (people === 1) notes.push("Solo travellers pay the 2-person price, as the car, driver and room are the same.");
-  }
-  (o.addons || []).forEach(k => {
-    const a = PRICING.addons[k]; if (!a) return;
-    const r = addonRate(k, people);
-    lines.push([`${a.label}: ${s(days, "day")} × ${inr(r)}`, r * days]);
-  });
-  return { days, lines, notes, total: lines.reduce((t, l) => t + l[1], 0) };
-}
-function fromPrice(p) {
-  if (p.kind === "custom") return "Price on request";
-  if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
-  if (p.kind === "villa") return `${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests`;
-  const r = calcPrice(p, { days: p.baseDays, people: 2, rooms: 1, hotel: "Budget", addons: [] });
-  return `From ${inr(r.total)} for 2 people`;
-}
-
-function pkgLabel(p) {
-  if (p.kind) return p.name;
-  const len = p.group === "2day" ? "2-day" : p.group === "3day" ? "3-day" : (p.id === "ancient-wai" ? "1–2 days" : "2-day");
-  return `${p.name} (${p.category}, ${len})`;
-}

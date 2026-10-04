@@ -21,12 +21,13 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="packages.html" aria-current="page">Packages</a></li>
         <li><a href="places.html">Places to visit</a></li>
+        <li><a href="index.html#prices">Prices</a></li>
         <li><a href="#fees">Activity prices</a></li>
         <li><a href="#seasons">Best time to go</a></li>
         <li><a href="index.html#contact">Contact</a></li>
       </ul>
     </nav>
-    <a href="index.html#contact" class="btn">Book a trip</a>
+    <a href="#all" class="btn">Book a trip</a>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="nav">☰</button>
   </div>
 </header>
@@ -44,7 +45,7 @@
     </svg>
   </section>
 
-  <section aria-label="Itineraries" style="padding-top:3rem">
+  <section id="all" aria-label="Packages" style="padding-top:3rem">
     <div class="wrap">
       <div class="filters" role="group" aria-label="Show packages">
         <button class="chip" data-f="all" aria-pressed="true">All</button>
@@ -61,41 +62,6 @@
     </div>
   </section>
 
-  <section id="times" class="alt" aria-labelledby="t-title">
-    <div class="wrap">
-      <h2 id="t-title">Travel times</h2>
-      <p class="lede">Approximate road distances at normal traffic. Weekends and monsoon can add 20–40%.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>From</th><th>To</th><th>Distance (km)</th><th>Drive time</th></tr></thead>
-          <tbody>
-            <tr><td>Wai</td><td>Menavali Ghat / Nana Phadnavis Wada</td><td>3</td><td>10 min</td></tr>
-            <tr><td>Wai</td><td>Wai Caves (Lohare)</td><td>7</td><td>15 min</td></tr>
-            <tr><td>Wai</td><td>Dhom Dam</td><td>10</td><td>20 min</td></tr>
-            <tr><td>Wai</td><td>Harrison's Folly</td><td>13</td><td>30 min</td></tr>
-            <tr><td>Wai</td><td>Panchgani (via Pasarni Ghat)</td><td>18</td><td>40 min</td></tr>
-            <tr><td>Wai</td><td>Balkawadi Dam / Borgaon</td><td>20</td><td>40 min</td></tr>
-            <tr><td>Wai</td><td>Mandhardev Kalubai temple</td><td>20</td><td>45 min (ghat)</td></tr>
-            <tr><td>Wai</td><td>Kaas Plateau (via Satara)</td><td>60</td><td>1 hr 45 min</td></tr>
-            <tr><td>Panchgani</td><td>Devrai Art Village</td><td>2</td><td>5 min</td></tr>
-            <tr><td>Panchgani</td><td>Bhilar Book Village</td><td>5</td><td>10 min</td></tr>
-            <tr><td>Panchgani</td><td>Rajpuri Caves</td><td>7</td><td>15 min</td></tr>
-            <tr><td>Panchgani</td><td>Mapro Garden (Gureghar)</td><td>10</td><td>20 min</td></tr>
-            <tr><td>Panchgani</td><td>Mahabaleshwar</td><td>19</td><td>40 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Venna Lake</td><td>2</td><td>5 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Wilson Point</td><td>2</td><td>5 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Old Mahabaleshwar temples</td><td>6</td><td>15 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Lingmala Waterfall</td><td>6</td><td>15 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Kate's Point / Needle Hole</td><td>7</td><td>20 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Arthur's Seat / Echo Point</td><td>12</td><td>30 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Pratapgad Fort</td><td>24</td><td>50 min</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Tapola</td><td>28</td><td>1 hr</td></tr>
-            <tr><td>Mahabaleshwar</td><td>Wai</td><td>35</td><td>1 hr 15 min</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
 
   <section id="fees" aria-labelledby="f-title">
     <div class="wrap">
@@ -126,6 +92,7 @@
             <tr><td>Bhilar Book Village</td><td>Free</td><td>–</td></tr>
             <tr><td>Trip photographer (DSLR photos)</td><td class="no">Optional add-on</td><td>1,499 per day (2,999 for 6–20 people)</td></tr>
             <tr><td>Drone shots (up to 10 shots a day)</td><td class="no">Optional add-on</td><td>2,499 per day (4,999 for 6–20 people)</td></tr>
+            <tr><td>Caretaker for elders (seniors packages)</td><td class="no">Optional add-on</td><td>999 per day</td></tr>
             <tr><td>Kaas Plateau (add-on)</td><td class="no">Not included</td><td>About 100–150, book online</td></tr>
           </tbody>
         </table>
@@ -166,37 +133,25 @@
 <script src="data.js"></script>
 <script>
   const host = document.getElementById('itins');
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
+  host.className = 'packages';
   PACKAGES.forEach(p => {
-    const s = document.createElement('article');
-    s.className = 'itin' + (p.group === 'special' ? ' special' : '');
-    s.id = p.id;
-    s.dataset.group = p.group; s.dataset.cat = p.category;
-    const who = p.group === 'other' ? (p.kind === 'driver' ? 'Driver only' : 'Custom trip') : p.group === 'special' ? 'Special package' : `${p.group === '2day' ? '2-day' : '3-day'} package for ${p.category.toLowerCase()}`;
-    const points = p.points ? `<ul class="itin-points">${p.points.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
-    const days = (p.days || []).map(d => `
-      <h4 class="day-title">${esc(d.title)}</h4>
-      <div class="table-wrap"><table class="day-table">
-        <thead><tr><th>Time</th><th>Stop</th><th>What to do</th></tr></thead>
-        <tbody>${d.stops.map(st => `<tr><td class="time">${esc(st[0])}</td><td><b>${esc(st[1])}</b></td><td>${esc(st[2])}</td></tr>`).join('')}</tbody>
-      </table></div>`).join('');
-    const notes = (p.notes || []).map(n => `<p class="note">${esc(n)}</p>`).join('');
-    s.innerHTML = `
-      <div class="itin-head">
-        <div><span class="who">${esc(who)}</span><h3>${esc(p.name)}</h3></div>
-        <a class="btn" href="index.html?pkg=${p.id}#contact">${p.kind === 'custom' ? 'Get a quote' : 'Book this trip'}</a>
-      </div>
-      <p class="summary">${esc(p.summary)}</p>
-      <p class="price-tag">${esc(fromPrice(p))}</p>
-      <div class="meta">
-        <div><span>Best for</span> <b>${esc(p.bestFor)}</b></div>
-        <div><span>Stay</span> <b>${esc(p.stay)}</b></div>
-        <div><span>Walking</span> <b>${esc(p.walking)}</b></div>
-        ${p.extra ? `<div><b>${esc(p.extra)}</b></div>` : ''}
-      </div>
-      ${points}${days}${notes}`;
-    host.appendChild(s);
+    const a = document.createElement('article');
+    a.className = 'pkg' + (p.group === 'special' || p.group === 'other' ? ' special' : '');
+    a.dataset.group = p.group; a.dataset.cat = p.category;
+    a.innerHTML = `<span class="who"></span><h3></h3><p class="sum"></p>
+      <dl><dt>Best for</dt><dd class="b"></dd><dt>Stay</dt><dd class="s"></dd></dl>
+      <p class="price-tag"></p>
+      <div class="card-actions">
+        <a class="btn small-btn" href="${pkgPage(p)}#book">${p.kind === 'custom' ? 'Get a quote' : 'Book now'}</a>
+        <a class="btn ghost small-btn" href="${pkgPage(p)}">${p.kind ? 'Details' : 'See the plan'}</a>
+      </div>`;
+    a.querySelector('.who').textContent = p.group === 'other' ? ({ villa: 'Pool villa', driver: 'Driver only', custom: 'Custom trip' }[p.kind]) : p.group === 'special' ? 'Special package' : `${p.group === '2day' ? '2-day' : '3-day'} · ${p.category}`;
+    a.querySelector('h3').textContent = p.name;
+    a.querySelector('.sum').textContent = p.summary;
+    a.querySelector('.b').textContent = p.bestFor;
+    a.querySelector('.s').textContent = p.stay;
+    a.querySelector('.price-tag').textContent = fromPrice(p);
+    host.appendChild(a);
   });
 
   /* Filters */
@@ -204,13 +159,13 @@
   chips.forEach(c => c.addEventListener('click', () => {
     chips.forEach(x => x.setAttribute('aria-pressed', x === c));
     const f = c.dataset.f;
-    document.querySelectorAll('.itin').forEach(el => {
+    document.querySelectorAll('#itins .pkg').forEach(el => {
       el.hidden = !(f === 'all' || el.dataset.group === f || el.dataset.cat === f);
     });
   }));
 
   /* Jump to a package when arriving from the home page */
-  if (location.hash) { const t = document.querySelector(location.hash); if (t) setTimeout(() => t.scrollIntoView(), 50); }
+  const h = location.hash.slice(1); const hp = PACKAGES.find(p => p.id === h); if (hp) location.replace(pkgPage(hp));
 </script>
 </body>
 </html>

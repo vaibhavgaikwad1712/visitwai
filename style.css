@@ -248,3 +248,32 @@ fieldset.addons legend{font-weight:500;font-size:.95rem;padding:0 .3rem}
 table.mini td.th{font-weight:500;color:var(--soft);font-size:.85rem;text-align:right}
 table.mini tr td:nth-child(2){text-align:right}
 .price-box .box-notes p{margin-top:.4rem}
+
+/* ===== package pages ===== */
+.who-hero{display:inline-block;font-weight:700;color:var(--berry);margin-bottom:.4rem}
+.hero-price{font-family:var(--display);font-size:clamp(1.6rem,4vw,2.2rem);color:var(--berry);margin:.25rem 0 1.25rem!important}
+a.chip{text-decoration:none}
+a.chip:hover{border-color:var(--forest);color:var(--forest)}
+
+/* booking: form and price side by side */
+.book-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.book-form{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.75rem;display:grid;gap:1rem}
+.book-form h3{font-size:1.35rem}
+.price-panel{position:sticky;top:calc(80px + env(safe-area-inset-top,0px))}
+.price-panel .price-box{margin:0}
+.price-bar{display:none}
+
+/* phones: price stays on screen next to the form as a bar; tap to see the breakdown */
+@media (max-width:820px){
+  .book-grid{grid-template-columns:1fr}
+  .book-form{padding:1.25rem;padding-bottom:1.5rem}
+  .price-panel{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.45);display:none;align-items:flex-end;top:0}
+  .price-panel.open{display:flex}
+  .price-panel .price-box{width:100%;border-radius:18px 18px 0 0;max-height:75vh;overflow:auto;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom,0px))}
+  .price-bar{position:fixed;left:0;right:0;bottom:0;z-index:25;display:block;transform:translateY(110%);transition:transform .2s}
+  .price-bar.show{transform:none}
+  .pb-toggle{width:100%;display:flex;align-items:center;gap:.6rem;border:0;background:var(--berry);color:#fff;font:500 1rem var(--body);padding:.9rem 1.25rem calc(.9rem + env(safe-area-inset-bottom,0px));cursor:pointer}
+  .pb-toggle b{font-family:var(--display);font-weight:400;font-size:1.5rem}
+  .pb-hint{margin-left:auto;text-decoration:underline;font-size:.95rem}
+  body:has(.price-bar.show) .wa{bottom:calc(4.5rem + env(safe-area-inset-bottom,0px))}
+}
