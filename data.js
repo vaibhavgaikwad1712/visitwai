@@ -10,6 +10,19 @@ const SITE = {
   instagram: "visitwai"
 };
 
+/* =====================================================================
+   OFFER BAR — the strip at the top of every page.
+   Change the text or date here. It hides itself after lastDay.
+   Set show: false to turn it off.
+   ===================================================================== */
+const OFFER = {
+  show: true,
+  text: "Diwali Getaways: book by 25 Oct, save ₹1,000",
+  button: "Book now",
+  whatsappMessage: "Hi Visit Wai! I want the Diwali Getaway offer (save ₹1,000).",
+  lastDay: "2026-10-25"            // YYYY-MM-DD, last day the bar shows
+};
+
 
 /* =====================================================================
    PRICES — change these numbers and every page and booking form update.
@@ -567,6 +580,31 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".yr").forEach(el => el.textContent = new Date().getFullYear());
   document.querySelectorAll("[data-email]").forEach(el => { el.href = "mailto:" + SITE.email; if (!el.hasAttribute("data-keep")) el.textContent = SITE.email; });
   document.querySelectorAll("[data-phone]").forEach(el => { el.href = "tel:" + SITE.phoneLink; el.textContent = SITE.phoneDisplay; });
-  document.querySelectorAll("[data-wa]").forEach(el => el.href = "https://wa.me/" + SITE.whatsapp);
+  const waLink = text => "https://wa.me/" + SITE.whatsapp + (text ? "?text=" + encodeURIComponent(text) : "");
+  document.querySelectorAll("[data-wa]").forEach(el => el.href = waLink());
+  /* "Book on WhatsApp" button: pre-types a message, naming the package on package pages */
+  const pagePkg = typeof PACKAGES !== "undefined" && document.body.dataset.pkg ? PACKAGES.find(x => x.id === document.body.dataset.pkg) : null;
+  document.querySelectorAll("[data-wa-book]").forEach(el => el.href = waLink(
+    pagePkg ? `Hi Visit Wai! I'd like to book "${pagePkg.name}".` : "Hi Visit Wai! I would like to book a trip."));
+
+  /* Offer bar */
+  let offerClosed = false;
+  try { offerClosed = sessionStorage.getItem("vw-offer-closed") === "1"; } catch (e) {}
+  if (OFFER.show && !offerClosed && new Date() <= new Date(OFFER.lastDay + "T23:59:59+05:30")) {
+    const bar = document.createElement("div");
+    bar.className = "offer-bar";
+    bar.setAttribute("role", "region");
+    bar.setAttribute("aria-label", "Current offer");
+    bar.innerHTML = '<span></span><a target="_blank" rel="noopener"></a><button type="button" aria-label="Close offer">×</button>';
+    bar.querySelector("span").textContent = OFFER.text;
+    const cta = bar.querySelector("a");
+    cta.textContent = OFFER.button;
+    cta.href = waLink(OFFER.whatsappMessage);
+    bar.querySelector("button").addEventListener("click", () => {
+      bar.remove();
+      try { sessionStorage.setItem("vw-offer-closed", "1"); } catch (e) {}
+    });
+    document.body.prepend(bar);
+  }
   document.querySelectorAll("[data-insta]").forEach(el => { el.href = "https://instagram.com/" + SITE.instagram; if (!el.hasAttribute("data-keep")) el.textContent = "@" + SITE.instagram; });
 });

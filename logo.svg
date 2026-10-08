@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="visitwai logo">
+<title>visitwai</title>
+<defs>
+<path id="vw-top" d="M30 100 A70 70 0 0 1 170 100"/>
+<path id="vw-bot" d="M24 100 A76 76 0 0 0 176 100"/>
+<clipPath id="vw-inner"><circle cx="100" cy="100" r="62"/></clipPath>
+</defs>
+<circle cx="100" cy="100" r="96" fill="#1F4D3A"/>
+<circle cx="100" cy="100" r="88" fill="none" stroke="#E3962B" stroke-width="1.2"/>
+<text font-family="Manrope, Arial, Helvetica, sans-serif" font-weight="800" font-size="15" letter-spacing="4"><textPath href="#vw-top" startOffset="50%" text-anchor="middle"><tspan fill="#FFFFFF">VISIT</tspan><tspan fill="#E3962B">WAI</tspan></textPath></text>
+<text font-family="Manrope, Arial, Helvetica, sans-serif" font-weight="700" font-size="9" letter-spacing="2.2" fill="#F6F1E4"><textPath href="#vw-bot" startOffset="50%" text-anchor="middle">WAI · PANCHGANI · MAHABALESHWAR</textPath></text>
+<circle cx="100" cy="100" r="62" fill="#F6F1E4"/>
+<g clip-path="url(#vw-inner)">
+<circle cx="126" cy="80" r="15" fill="#E3962B" opacity="0.22"/>
+<path d="M139 80 L144 80 M137.3 86.5 L141.6 89 M132.5 91.3 L135 95.6 M126 93 L126 98 M119.5 91.3 L117 95.6 M114.7 86.5 L110.4 89 M113 80 L108 80 M114.7 73.5 L110.4 71 M119.5 68.7 L117 64.4 M126 67 L126 62 M132.5 68.7 L135 64.4 M137.3 73.5 L141.6 71" stroke="#E3962B" stroke-width="2" stroke-linecap="round"/>
+<circle cx="126" cy="80" r="10" fill="#E3962B"/>
+<path d="M36 124 L62 90 L76 104 L94 82 L112 100 L132 86 L166 124 Z" fill="#2A7F8A"/>
+<path d="M90 86 L94 82 L98 86 L95.5 85.5 L94 87 L92.5 85.5 Z" fill="#F6F1E4"/>
+<path d="M36 130 L56 114 L72 126 L130 126 L146 114 L166 130 L166 170 L36 170 Z" fill="#163A2B"/>
+<g fill="#A3471B">
+<g transform="translate(66 122)"><path d="M0 -12 C-3 -9 -4 -7 -4 -4 L4 -4 C4 -7 3 -9 0 -12 Z"/><rect x="-4.5" y="-4" width="9" height="4"/><circle cx="0" cy="-12.6" r="0.9" fill="#E3962B"/></g>
+<g transform="translate(125 126)"><path d="M0 -12 C-3 -9 -4 -7 -4 -4 L4 -4 C4 -7 3 -9 0 -12 Z"/><rect x="-4.5" y="-4" width="9" height="4"/><circle cx="0" cy="-12.6" r="0.9" fill="#E3962B"/></g>
+<g transform="translate(146 115) scale(0.85)"><path d="M0 -12 C-3 -9 -4 -7 -4 -4 L4 -4 C4 -7 3 -9 0 -12 Z"/><rect x="-4.5" y="-4" width="9" height="4"/><circle cx="0" cy="-12.6" r="0.9" fill="#E3962B"/></g>
+<g transform="translate(157 123) scale(0.75)"><path d="M0 -12 C-3 -9 -4 -7 -4 -4 L4 -4 C4 -7 3 -9 0 -12 Z"/><rect x="-4.5" y="-4" width="9" height="4"/><circle cx="0" cy="-12.6" r="0.9" fill="#E3962B"/></g>
+</g>
+<path d="M100 92 C94 99 90 106 90 116 L110 116 C110 106 106 99 100 92 Z" fill="#A3471B"/>
+<circle cx="100" cy="90" r="2" fill="#E3962B"/>
+<rect x="88" y="116" width="24" height="10" fill="#A3471B"/>
+<path d="M97 126 L97 121 C97 119 103 119 103 121 L103 126 Z" fill="#F6F1E4"/>
+<rect x="80" y="126" width="40" height="3" fill="#C9B79A"/>
+<rect x="74" y="130" width="52" height="3" fill="#C9B79A"/>
+<rect x="68" y="134" width="64" height="3" fill="#C9B79A"/>
+<path d="M36 144 C56 138 70 150 100 143 C128 137 146 149 166 142" stroke="#7FC4C9" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M40 153 C60 148 74 158 100 152 C126 147 144 156 164 151" stroke="#7FC4C9" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+<g transform="translate(72 62)" fill="#1F4D3A">
+<rect x="-6" y="-2.5" width="12" height="5" rx="2"/>
+<path d="M-6 -1 L-14 -4 M6 -1 L14 -4" stroke="#1F4D3A" stroke-width="1.8" stroke-linecap="round"/>
+<ellipse cx="-14" cy="-6.5" rx="6" ry="1.2"/>
+<ellipse cx="14" cy="-6.5" rx="6" ry="1.2"/>
+<circle cx="0" cy="4.5" r="2" fill="#E3962B"/>
+</g>
+</g>
+</svg>

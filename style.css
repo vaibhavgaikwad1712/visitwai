@@ -41,7 +41,14 @@ section{padding:5rem 0}
 /* header */
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;justify-content:space-between;height:64px;gap:1rem}
-.logo{font-family:var(--display);font-size:1.6rem;color:var(--forest);text-decoration:none;white-space:nowrap}
+.logo{font-family:var(--display);font-size:1.6rem;color:var(--forest);text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:.55rem}
+.logo img{width:44px;height:44px;flex:none}
+
+/* offer bar (set in data.js) */
+.offer-bar{background:#1F4D3A;color:#FBF1DD;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.4rem 1rem;padding:.55rem 3rem .55rem 1.25rem;position:relative;text-align:center;font-weight:500;line-height:1.35}
+.offer-bar a{background:#E3962B;color:#1B1B1B;text-decoration:none;font-weight:700;padding:.3rem 1rem;border-radius:999px;white-space:nowrap}
+.offer-bar a:hover{filter:brightness(1.08)}
+.offer-bar button{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:none;border:0;color:#FBF1DD;font-size:1.4rem;line-height:1;width:2.25rem;height:2.25rem;cursor:pointer}
 nav ul{display:flex;gap:1.4rem;list-style:none}
 nav a{text-decoration:none;font-weight:500;color:var(--soft)}
 nav a:hover,nav a[aria-current="page"]{color:var(--berry)}
@@ -195,7 +202,10 @@ footer a{color:#fff}
 footer nav{display:block;position:static;background:none;border:0}
 footer nav ul{flex-direction:row;padding:0;gap:1.25rem}
 footer nav a{color:#E7EFE9}
-.wa{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:20;background:#1F9D55;color:#fff;border-radius:999px;padding:.75rem 1.1rem;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.wa{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:20;background:#128C4A;color:#fff;border-radius:999px;padding:.8rem 1.2rem .8rem 1rem;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.25);display:inline-flex;align-items:center;gap:.5rem}
+.wa:hover{background:#0F7A40}
+.wa svg{width:1.4rem;height:1.4rem;flex:none}
+@media (max-width:380px){.wa{padding:.9rem}.wa span{display:none}}
 @media print{header,.wa,.filters,footer{display:none}}
 
 /* itinerary tables stack on phones */
