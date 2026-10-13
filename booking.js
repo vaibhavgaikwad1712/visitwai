@@ -19,7 +19,7 @@ function mountBooking(host, p) {
         <label>${isVilla ? "Number of nights" : "Number of days"}<input name="days" type="number" min="${minDays}" max="15" value="${p.baseDays}"></label>
       </div>
       <div class="row">
-        <label>${isVilla ? "Guests" : "People"} (adults and children 5+)<input name="people" type="number" min="1" max="${isVilla ? PRICING.villa.maxGuests : PRICING.maxPeople}" value="${isVilla ? PRICING.villa.maxGuests : 2}"></label>
+        <label>Number of adults <span class="hint">(children 5+ count as adults)</span><input name="people" type="number" min="1" max="${isVilla ? PRICING.villa.maxGuests : PRICING.maxPeople}" value="${isVilla ? PRICING.villa.maxGuests : 2}"></label>
         <label>Children under ${PRICING.children.freeUnderAge} (free, max ${PRICING.children.maxFree})<input name="kids" type="number" min="0" max="${PRICING.children.maxFree}" value="0"></label>
       </div>
       ${isPkg || isCustom ? `
@@ -112,6 +112,7 @@ function mountBooking(host, p) {
     if (isCustom) {
       totalEls.forEach(el => el.textContent = "On request");
       note("Tell us your plan and we'll send you a price, usually within a few hours.");
+      if (PRICING.offer && PRICING.offer.active) note(`${inr(PRICING.offer.amount)} off is taken from your quoted price.`);
       if (o.addons.length) note("Add-ons chosen: " + o.addons.map(k => PRICING.addons[k].label).join(", "));
       return;
     }
@@ -119,6 +120,12 @@ function mountBooking(host, p) {
     if (r.error) { totalEls.forEach(el => el.textContent = "–"); note(r.error); return; }
     const t = document.createElement("table"); t.className = "mini";
     r.lines.forEach(l => { const tr = t.insertRow(); tr.insertCell().textContent = l[0]; tr.insertCell().textContent = inr(l[1]); });
+    if (r.discount > 0) {
+      const sub = t.insertRow(); sub.className = "sub";
+      sub.insertCell().textContent = "Subtotal"; sub.insertCell().textContent = inr(r.subtotal);
+      const off = t.insertRow(); off.className = "off";
+      off.insertCell().textContent = `${PRICING.offer.label}: ${inr(PRICING.offer.amount)} off`; off.insertCell().textContent = "−" + inr(r.discount);
+    }
     linesEl.appendChild(t);
     totalEls.forEach(el => el.textContent = inr(r.total));
     r.notes.forEach(note);
@@ -155,8 +162,8 @@ function mountBooking(host, p) {
       rooms: isPkg && o.hotel !== "none" && o.days > 1 ? String(o.rooms) : "-",
       addons: o.addons.map(k => PRICING.addons[k].label).join(", ") || "None",
       food: f.food ? f.food.value : "-",
-      total: r ? inr(r.total) : "Quote needed",
-      breakdown: r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).concat(r.notes).join(" | ") : "Custom trip",
+      total: r ? inr(r.total) + (r.discount ? ` (after ${inr(r.discount)} off)` : "") : "Quote needed",
+      breakdown: r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).concat(r.discount ? [`Subtotal = ${inr(r.subtotal)}`, `${PRICING.offer.label} = -${inr(r.discount)}`] : []).concat(r.notes).join(" | ") : "Custom trip",
       notes: f.notes.value.trim() || "-", terms: "Yes"
     };
     btn.disabled = true; msg.textContent = "Sending your booking…";
@@ -173,10 +180,10 @@ function mountBooking(host, p) {
         const res = await fetch("https://formsubmit.co/ajax/" + SITE.email, {
           method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
           body: JSON.stringify({
-            _subject: `New booking: ${p.name} (${v.days}, ${v.people} ${o.people > 1 ? "people" : "person"})`,
+            _subject: `New booking: ${p.name} (${v.days}, ${v.people} ${o.people > 1 ? "adults" : "adult"})`,
             _template: "table", _captcha: "false",
             Name: v.name, Phone: v.phone, Email: v.email, Package: v.package, "Travel date": v.date,
-            [isVilla ? "Nights" : "Days"]: v.days, People: v.people, "Children under 5": v.children,
+            [isVilla ? "Nights" : "Days"]: v.days, Adults: v.people, "Children under 5": v.children,
             Hotel: v.hotel, Rooms: v.rooms, "Add-ons": v.addons, Food: v.food,
             Total: v.total, "Price breakdown": v.breakdown, Notes: v.notes, "Terms accepted": v.terms
           })

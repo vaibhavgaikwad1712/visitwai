@@ -2,20 +2,32 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="theme-color" content="#0C1B22">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Visit Wai | Panchgani & Mahabaleshwar tour packages from Wai</title>
 <meta name="description" content="2-day and 3-day Panchgani and Mahabaleshwar tours from Wai for couples, families, seniors and groups, plus Ancient Wai heritage and scenic hidden-places packages.">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Mukta:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div class="offer-bar" id="offerBar" hidden>
+  <div class="wrap offer-inner">
+    <a class="offer-link" href="packages.html#all"><b class="offer-amt"></b> <span class="offer-txt"></span></a>
+    <a class="btn small-btn offer-btn" href="packages.html#all">Book now</a>
+  </div>
+</div>
+<script>document.addEventListener("DOMContentLoaded",()=>{const o=PRICING.offer,b=document.getElementById("offerBar");if(!o||!o.active||!b)return;b.querySelector(".offer-amt").textContent=inr(o.amount)+" off";b.querySelector(".offer-txt").textContent="every booking. Applied automatically to your final total.";b.hidden=false;});</script>
+
 <header>
   <div class="wrap bar">
-    <a href="index.html" class="logo"><img src="logo.svg" alt="" width="44" height="44">Visit Wai</a>
+    <a href="index.html" class="logo brand" aria-label="visitwai home">
+      <img src="logo.svg" alt="" class="brand-mark" onerror="this.remove()">
+      <span class="brand-text"><span class="brand-name">visit<span class="brand-wai">wai</span></span><span class="brand-tag">Tours · Travel · Aerial Stories</span><span class="brand-place">Wai · Panchgani · Mahabaleshwar</span></span>
+    </a>
     <nav id="nav" aria-label="Main">
       <ul>
         <li><a href="index.html" aria-current="page">Home</a></li>
@@ -34,11 +46,12 @@
 <main id="top">
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
+      <p class="kicker">Private hill journeys from Wai</p>
       <h1 id="hero-title">Panchgani & Mahabaleshwar, from Wai</h1>
       <p>2-day and 3-day hill trips with a budget stay, car and entry tickets included, planned for couples, families, seniors and groups. Or explore ancient Wai and the hidden viewpoints with a local.</p>
       <div class="actions">
         <a href="#packages" class="btn">See packages</a>
-        <a href="packages.html" class="btn ghost">All packages</a>
+        <a href="trip-custom.html" class="btn ghost">Plan a custom trip</a>
       </div>
     </div>
     <svg class="ridges" viewBox="0 0 1440 260" preserveAspectRatio="none" aria-hidden="true">
@@ -199,7 +212,7 @@
   </div>
 </footer>
 
-<a class="wa" data-wa data-wa-book href="#" target="_blank" rel="noopener" aria-label="Book on WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.5 8.5 0 1 1 21 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.5-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2z"/></svg><span>Book on WhatsApp</span></a>
+<a class="wa" data-wa href="#" target="_blank" rel="noopener">WhatsApp us</a>
 
 <script src="data.js"></script>
 <script>
@@ -212,7 +225,7 @@
     PACKAGES.filter(p => p.group === g).forEach(p => {
       const a = document.createElement('article');
       a.className = 'pkg' + (g === 'special' || g === 'other' ? ' special' : '');
-      a.innerHTML = `<span class="who"></span><h3></h3><p class="sum"></p>
+      a.innerHTML = `<div class="thumb" aria-hidden="true"></div><span class="who"></span><h3></h3><p class="sum"></p>
         ${p.cardNote ? '<p class="card-note"></p>' : ''}
         <dl><dt>Stay</dt><dd class="s"></dd><dt>Walking</dt><dd class="w"></dd></dl>
         <p class="price-tag"></p>
@@ -227,6 +240,8 @@
       a.querySelector('.s').textContent = p.stay;
       a.querySelector('.w').textContent = p.walking;
       a.querySelector('.price-tag').textContent = fromPrice(p);
+      const hp = heroPhoto(p.id);
+      if (hp) { const im = photoImg(hp, ""); im.onload = () => { const t = a.querySelector('.thumb'); t.appendChild(im); t.classList.add('has-photo'); }; }
       grid.appendChild(a);
     });
     groupsEl.append(h, grid);

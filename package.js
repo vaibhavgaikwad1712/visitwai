@@ -21,7 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const others = PACKAGES.filter(x => x.id !== p.id).map(x => `<a class="chip" href="${pkgPage(x)}">${esc(x.name)}</a>`).join("");
 
   root.innerHTML = `
-  <section class="hero page-hero">
+  <section class="hero page-hero pkg-hero">
+    <div class="hero-photo" aria-hidden="true"></div>
     <div class="wrap">
       <span class="who-hero">${esc(who)}</span>
       <h1>${esc(p.name)}</h1>
@@ -44,6 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="in"><h3>Included</h3><ul>${inc.yes.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
         <div class="out"><h3>Not included</h3><ul>${inc.no.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
       </div>
+      <div class="gallery-wrap" hidden>
+        <h2 style="margin-top:2.5rem">Photos</h2>
+        <div class="gallery"></div>
+      </div>
       ${points ? `<h2 style="margin-top:2.5rem">How it works</h2>${points}` : ""}
       ${days ? `<h2 id="plan" style="margin-top:2.5rem">The plan</h2><p class="small">Timings are approximate and adjust to traffic, weather and your pace.</p>${days}` : ""}
       ${notes}
@@ -63,5 +68,46 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   </section>`;
   mountBooking(document.getElementById("bookHost"), p);
+
+  /* ---- photos ---- */
+  const list = PHOTOS[p.id] || [];
+  const hero = root.querySelector(".pkg-hero"), heroBox = root.querySelector(".hero-photo");
+  if (list[0]) {
+    const img = photoImg(list[0], "");
+    img.loading = "eager";
+    img.onload = () => { heroBox.appendChild(img); hero.classList.add("has-photo"); };
+  }
+  const gw = root.querySelector(".gallery-wrap"), gal = root.querySelector(".gallery");
+  const shown = [];
+  list.forEach((ph, i) => {
+    const fig = document.createElement("figure");
+    fig.className = "g-item" + (i === 0 ? " wide" : "");
+    const img = photoImg(ph, "");
+    img.onload = () => {
+      fig.appendChild(img);
+      const cap = document.createElement("figcaption");
+      cap.textContent = ph.caption + (ph.credit ? ` · ${ph.credit}` : "");
+      fig.appendChild(cap);
+      if (ph.drone) { const b = document.createElement("span"); b.className = "badge"; b.textContent = "Drone shot"; fig.appendChild(b); }
+      if (ph.ai) { const b = document.createElement("span"); b.className = "badge ai"; b.textContent = "AI illustration"; fig.appendChild(b); }
+      fig.tabIndex = 0; fig.setAttribute("role", "button"); fig.setAttribute("aria-label", "View photo: " + ph.caption);
+      fig.addEventListener("click", () => openViewer(ph));
+      fig.addEventListener("keydown", e => { if (e.key === "Enter") openViewer(ph); });
+      // keep the planned order even though images load at different times
+      fig.style.order = i;
+      gal.appendChild(fig); shown.push(ph); gw.hidden = false;
+    };
+  });
+  function openViewer(ph) {
+    const v = document.createElement("div");
+    v.className = "viewer"; v.setAttribute("role", "dialog"); v.setAttribute("aria-label", ph.caption);
+    v.innerHTML = `<button class="viewer-close" aria-label="Close">✕</button><img alt=""><p></p>`;
+    v.querySelector("img").src = ph.file; v.querySelector("img").alt = ph.alt;
+    v.querySelector("p").textContent = ph.caption + (ph.ai ? " (AI illustration)" : "") + (ph.credit ? ` · ${ph.credit}` : "");
+    const close = () => v.remove();
+    v.addEventListener("click", e => { if (e.target === v || e.target.classList.contains("viewer-close")) close(); });
+    document.addEventListener("keydown", function esc(e) { if (e.key === "Escape") { close(); document.removeEventListener("keydown", esc); } });
+    document.body.appendChild(v); v.querySelector(".viewer-close").focus();
+  }
   if (location.hash) { const t = document.querySelector(location.hash); if (t) setTimeout(() => t.scrollIntoView(), 60); }
 });
