@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ---- photos ---- */
   const list = PHOTOS[p.id] || [];
   const hero = root.querySelector(".pkg-hero"), heroBox = root.querySelector(".hero-photo");
+  hero.style.backgroundImage = `linear-gradient(90deg,rgba(8,19,24,.94) 0%,rgba(8,19,24,.6) 42%,rgba(8,19,24,0) 75%), url(${sceneFor(p.id)})`;
   if (list[0]) {
     const img = photoImg(list[0], "");
     img.loading = "eager";

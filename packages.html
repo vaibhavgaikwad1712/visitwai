@@ -163,6 +163,7 @@
     a.querySelector('.b').textContent = p.bestFor;
     a.querySelector('.s').textContent = p.stay;
     a.querySelector('.price-tag').textContent = fromPrice(p);
+    a.querySelector('.thumb').style.backgroundImage = `linear-gradient(180deg,rgba(12,27,34,0) 70%,rgba(12,27,34,.25)), url(${sceneFor(p.id)})`;
     const hp = heroPhoto(p.id);
     if (hp) { const im = photoImg(hp, ""); im.onload = () => { const t = a.querySelector('.thumb'); t.appendChild(im); t.classList.add('has-photo'); }; }
     host.appendChild(a);

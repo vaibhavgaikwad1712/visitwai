@@ -69,7 +69,7 @@
         <li>Pickup and drop in Wai</li>
         <li>Budget stay, car and entry tickets included</li>
         <li>Driver for your own car from ₹1,999 a day</li>
-        <li>Packages from ₹5,500 a day</li>
+        <li>Packages from ₹5,499 a day</li>
       </ul>
     </div>
   </div>
@@ -130,7 +130,7 @@
             <li>AC car with driver, fuel, tolls and driver allowance</li>
             <li>Parking at all points and temples</li>
             <li>Municipal tourist tax at Panchgani and Mahabaleshwar</li>
-            <li>Budget hotel stay (worth ₹1,000 per room per night), with upgrades available</li>
+            <li>Budget hotel stay (worth ₹999 per room per night), with upgrades available</li>
             <li>Entry tickets for viewpoints, temples and heritage sites on the itinerary</li>
             <li>History guide on Ancient Wai</li>
           </ul>
@@ -193,7 +193,7 @@
           <li><span>Email</span><a data-email href="#"></a></li>
           <li><span>Phone & WhatsApp</span><a data-phone href="#"></a></li>
           <li><span>Instagram</span><a data-insta href="#" target="_blank" rel="noopener"></a></li>
-          <li><span>Based in</span><b>Wai, Satara district, Maharashtra</b></li>
+          <li><span>Based in</span><b>Wai, Maharashtra</b></li>
         </ul>
         <div class="book-links">
           <h3>Choose a trip to book</h3>
@@ -240,7 +240,9 @@
       a.querySelector('.s').textContent = p.stay;
       a.querySelector('.w').textContent = p.walking;
       a.querySelector('.price-tag').textContent = fromPrice(p);
-      const hp = heroPhoto(p.id);
+      a.querySelector('.thumb').style.backgroundImage = `linear-gradient(180deg,rgba(12,27,34,0) 70%,rgba(12,27,34,.25)), url(${sceneFor(p.id)})`;
+      a.querySelector('.thumb').style.backgroundImage = `linear-gradient(180deg,rgba(12,27,34,0) 70%,rgba(12,27,34,.25)), url(${sceneFor(p.id)})`;
+    const hp = heroPhoto(p.id);
       if (hp) { const im = photoImg(hp, ""); im.onload = () => { const t = a.querySelector('.thumb'); t.appendChild(im); t.classList.add('has-photo'); }; }
       grid.appendChild(a);
     });
@@ -272,7 +274,7 @@
   const exP = PACKAGES.find(p => p.id === 'families-3');
   const ex = calcPrice(exP, { days: 3, people: 5, rooms: 3, hotel: '3 star', addons: [] });
   document.getElementById('pExample').textContent =
-    `A family of 5 on a 3-day trip with a 3 star upgrade: 3 days × ${inr(tierRate(5))} (4–6 people, budget stay included) + 3 rooms × 2 nights × ${inr(hotelUpgrade('3 star'))} upgrade = ${inr(ex.total)}.`;
+    `A family of 5 on a 3-day trip with a 3 star upgrade: 3 days × ${inr(tierRate(5))} (4–6 people, budget stay included) + 3 rooms × 2 nights × ${inr(hotelUpgrade('3 star'))} upgrade = ${inr(ex.subtotal)}, then ${inr(ex.discount)} off = ${inr(ex.total)}.`;
 
   document.getElementById('bookLinks').innerHTML = PACKAGES.filter(p => p.kind !== 'custom')
     .map(p => `<a class="chip" href="${pkgPage(p)}#book">${p.name}</a>`).join('');

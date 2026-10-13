@@ -126,6 +126,10 @@ function mountBooking(host, p) {
       const off = t.insertRow(); off.className = "off";
       off.insertCell().textContent = `${PRICING.offer.label}: ${inr(PRICING.offer.amount)} off`; off.insertCell().textContent = "−" + inr(r.discount);
     }
+    if (r.rounding) {
+      const rd = t.insertRow(); rd.className = "off";
+      rd.insertCell().textContent = "Rounded off"; rd.insertCell().textContent = (r.rounding > 0 ? "+" : "−") + inr(Math.abs(r.rounding));
+    }
     linesEl.appendChild(t);
     totalEls.forEach(el => el.textContent = inr(r.total));
     r.notes.forEach(note);
@@ -163,7 +167,7 @@ function mountBooking(host, p) {
       addons: o.addons.map(k => PRICING.addons[k].label).join(", ") || "None",
       food: f.food ? f.food.value : "-",
       total: r ? inr(r.total) + (r.discount ? ` (after ${inr(r.discount)} off)` : "") : "Quote needed",
-      breakdown: r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).concat(r.discount ? [`Subtotal = ${inr(r.subtotal)}`, `${PRICING.offer.label} = -${inr(r.discount)}`] : []).concat(r.notes).join(" | ") : "Custom trip",
+      breakdown: r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).concat(r.discount ? [`Subtotal = ${inr(r.subtotal)}`, `${PRICING.offer.label} = -${inr(r.discount)}`] : []).concat(r.rounding ? [`Rounded off = ${r.rounding > 0 ? "+" : "-"}${inr(Math.abs(r.rounding))}`] : []).concat(r.notes).join(" | ") : "Custom trip",
       notes: f.notes.value.trim() || "-", terms: "Yes"
     };
     btn.disabled = true; msg.textContent = "Sending your booking…";

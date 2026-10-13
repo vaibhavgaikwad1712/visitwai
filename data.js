@@ -16,22 +16,22 @@ const SITE = {
    ===================================================================== */
 const PRICING = {
   // Package cost per day, by group size (adults + children aged 5 and above).
-  // A budget stay (worth ₹1,000 per room per night) is INCLUDED in this price.
+  // A budget stay (worth ₹999 per room per night) is INCLUDED in this price.
   packageTiers: [
-    { upTo: 3,  perDay: 5500 },    // 1–3 people (priced for 2; a 3rd person shares a room)
-    { upTo: 6,  perDay: 7500 },    // 4–6 people
-    { upTo: 14, perDay: 9500 },    // 7–14 people
-    { upTo: 20, perDay: 11500 }    // 15–20 people
+    { upTo: 3,  perDay: 5499 },    // 1–3 people (priced for 2; a 3rd person shares a room)
+    { upTo: 6,  perDay: 7499 },    // 4–6 people
+    { upTo: 14, perDay: 9499 },    // 7–14 people
+    { upTo: 20, perDay: 11499 }    // 15–20 people
   ],
   maxPeople: 20,
   children: { freeUnderAge: 5, maxFree: 2 },   // up to 2 children under 5 travel free
   includedHotel: "Budget",          // this hotel type is included in the package price
   hotelsPerNight: {                 // value of each hotel type, per room (2 people) per night
-    "Budget": 1000,
-    "2 star": 1500,
-    "3 star": 3000,
-    "4 star": 5000,
-    "5 star": 10000
+    "Budget": 999,
+    "2 star": 1499,
+    "3 star": 2999,
+    "4 star": 4999,
+    "5 star": 9999
   },
   driverOnlyPerDay: 1999,           // our driver for the customer's own car
   addons: {                         // per day; larger price from largeGroupFrom people
@@ -591,6 +591,8 @@ function includesFor(p) {
    - Villa: villa rate × nights (o.days = nights), plus transfer if set.
    - Driver only: driver rate × days.
    - Add-ons: per day, larger price from PRICING.addons.largeGroupFrom people. */
+/* Round to the nearest amount ending in 99 (10,998 → 10,999; 26,992 → 26,999) */
+const to99 = n => n <= 0 ? 0 : Math.max(99, Math.round((n + 1) / 100) * 100 - 1);
 function tierRate(people) {
   const t = PRICING.packageTiers.find(t => people <= t.upTo);
   return t ? t.perDay : null;
@@ -604,7 +606,8 @@ function addonsFor(p) {
 }
 function hotelUpgrade(hotel) {
   const r = PRICING.hotelsPerNight[hotel], base = PRICING.hotelsPerNight[PRICING.includedHotel];
-  return r ? Math.max(0, r - base) : 0;
+  if (!r || r <= base) return 0;
+  return Math.ceil((r - base) / 100) * 100 - 1;   // keep prices in the xx99 style: 500 → 499, 2,000 → 1,999
 }
 function calcPrice(p, o) {
   if (!p || p.kind === "custom") return null;
@@ -641,7 +644,7 @@ function calcPrice(p, o) {
   const subtotal = lines.reduce((t, l) => t + l[1], 0);
   let discount = 0;
   if (PRICING.offer && PRICING.offer.active) discount = Math.min(PRICING.offer.amount, subtotal);
-  return { days, lines, notes, subtotal, discount, total: subtotal - discount };
+  return { days, lines, notes, subtotal, discount, rounding: 0, total: subtotal - discount };
 }
 function fromPrice(p) {
   if (p.kind === "custom") return "Price on request";
@@ -663,6 +666,7 @@ function photoImg(ph, cls) {
   img.src = ph.file;
   return img;
 }
+const sceneFor = id => `images/scenes/${id}.svg`;   // illustrated scene shown until a real photo is uploaded
 function heroPhoto(id) { return (PHOTOS[id] || [])[0]; }
 
 /* Shared page behaviour: menu, year, contact details */
