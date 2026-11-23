@@ -66,7 +66,7 @@
   <div class="facts">
     <div class="wrap">
       <ul>
-        <li>Pickup and drop in Wai</li>
+        <li>Pickup and drop in Wai, or from Pune (₹3,000 one way, ₹5,000 both)</li>
         <li>Budget stay, car and entry tickets included</li>
         <li>Driver for your own car from ₹1,999 a day</li>
         <li>Packages from ₹5,499 a day</li>
@@ -263,13 +263,17 @@
   }).join('');
   document.getElementById('pOther').innerHTML =
     `<tr><td>Pool villa, up to ${PRICING.villa.maxGuests} guests, per night (Wai stand pickup and drop ${PRICING.villa.transfer ? inr(PRICING.villa.transfer) + ' extra' : 'included'})</td><td>${inr(PRICING.villa.perNight)}</td></tr>` +
-    `<tr><td>Driver for your own car, per day</td><td>${inr(PRICING.driverOnlyPerDay)}</td></tr>`;
+    `<tr><td>Driver for your own car, per day</td><td>${inr(PRICING.driverOnlyPerDay)}</td></tr>` +
+    `<tr><td>Pune pickup only, or Pune drop only</td><td>${inr(PRICING.pune.oneWay)}</td></tr>` +
+    `<tr><td>Pune pickup and drop</td><td>${inr(PRICING.pune.both)}</td></tr>`;
   document.getElementById('pPolicy').innerHTML = [
     `Package prices include a budget hotel stay and are for 2 people. Up to 3 people pay the same ${inr(PRICING.packageTiers[0].perDay)} a day.`,
     `Rooms are for 2 people. A 3rd person in a room depends on the hotel; its extra-bed charge is added when we confirm.`,
     `Solo travellers pay the 2-person price.`,
     `Up to ${PRICING.children.maxFree} children under ${PRICING.children.freeUnderAge} travel free, sharing their parents' bed and seat. Children ${PRICING.children.freeUnderAge} and above count as people.`,
-    `Packages are for up to ${PRICING.maxPeople} people; the pool villa for up to ${PRICING.villa.maxGuests}.`
+    `Packages are for up to ${PRICING.maxPeople} people; the pool villa for up to ${PRICING.villa.maxGuests}.`,
+    `Pay ${PRICING.payment.bookingPercent}% of the total as the booking amount to confirm your trip. The full balance must be paid before the trip starts.`,
+    `Pickup and drop in Wai is included. Pickup from Pune and drop back to Pune are also available: ${inr(PRICING.pune.oneWay)} extra for only pickup or only drop, ${inr(PRICING.pune.both)} extra for both.`
   ].map(t => `<li>${t}</li>`).join('');
   const exP = PACKAGES.find(p => p.id === 'families-3');
   const ex = calcPrice(exP, { days: 3, people: 5, rooms: 3, hotel: '3 star', addons: [] });

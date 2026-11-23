@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <section id="book" class="alt">
     <div class="wrap">
       <h2>${p.kind === "custom" ? "Ask for a quote" : "Book this trip"}</h2>
-      <p class="lede">Choose your dates, group and add-ons. Your price updates as you go. We'll call you to confirm availability and payment.</p>
+      <p class="lede">Choose your dates, group and add-ons. Your price updates as you go. We'll call you to confirm availability. Pay ${PRICING.payment.bookingPercent}% as the booking amount to confirm, and the full balance before the trip starts.</p>
       <div id="bookHost"></div>
     </div>
   </section>

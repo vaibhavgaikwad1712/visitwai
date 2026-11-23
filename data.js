@@ -41,6 +41,8 @@ const PRICING = {
     drone: { label: "Drone shots (up to 10 shots a day)", short: "Drone shots", perDay: 2499, perDayLarge: 4999, pickDays: true },
     caretaker: { label: "Caretaker for elders", short: "Caretaker", perDay: 999, perDayLarge: 999, onlyFor: ["seniors-2", "seniors-3"] }
   },
+  payment: { bookingPercent: 30 },     // booking amount to confirm; the full balance is paid before the trip starts
+  pune: { oneWay: 3000, both: 5000 },  // Pune pickup OR drop only = oneWay; pickup AND drop = both
   villa: { perNight: 10999, maxGuests: 8, transfer: 0 },  // transfer: 0 = Wai stand pickup & drop included
   // Offer: taken off the FINAL total after all choices. Set active: false to switch it off.
   offer: { active: true, amount: 1000, label: "Visit Wai offer" }
@@ -559,10 +561,19 @@ const GROUP_LABELS = { "2day": "2-day packages", "3day": "3-day packages", "spec
 /* Each package has its own page: trip-<id>.html */
 const pkgPage = p => `trip-${p.id}.html`;
 
+/* Pune pickup / drop line used on the site */
+function puneLine() {
+  return `Pickup from Pune and drop back to Pune also available: ${inr(PRICING.pune.oneWay)} extra for only pickup or only drop, ${inr(PRICING.pune.both)} extra for both`;
+}
+
+function punePrice(o) {
+  return o.punePickup && o.puneDrop ? PRICING.pune.both : (o.punePickup || o.puneDrop) ? PRICING.pune.oneWay : 0;
+}
+
 /* What every package includes / excludes (shown on each package page) */
 function includesFor(p) {
   if (p.kind === "villa") return {
-    yes: ["Private pool villa for up to 8 guests", "Pickup from Wai bus stand to the villa and drop back to Wai"],
+    yes: ["Private pool villa for up to 8 guests", "Pickup from Wai bus stand to the villa and drop back to Wai", puneLine()],
     no: ["Food and drinks, unless arranged with the villa", "Sightseeing and activities", "Photographer, drone and other add-ons unless selected"]
   };
   if (p.kind === "driver") return {
@@ -581,6 +592,7 @@ function includesFor(p) {
   ];
   if (p.baseDays > 1) yes.splice(1, 0, `Budget hotel stay included (worth ${inr(PRICING.hotelsPerNight[PRICING.includedHotel])} per room per night); upgrade to 2–5 star if you like`);
   if (p.id === "ancient-wai") yes.push("Local history guide on Day 1");
+  yes.push("Pickup and drop in Wai", puneLine());
   const no = ["Boating, rides, paragliding and amusement parks", "Meals, unless you choose them", "Photographer, drone" + (p.category === "Seniors" ? ", caretaker" : "") + " unless selected", "Camera fees, shopping and tips"];
   return { yes, no };
 }
@@ -643,6 +655,10 @@ function calcPrice(p, o) {
     }
     if (people === 1) notes.push("Solo travellers pay the 2-person price, as the car, driver and room are the same.");
   }
+  if (p.kind !== "driver") {
+    const pp = punePrice(o);
+    if (pp) lines.push([o.punePickup && o.puneDrop ? "Pickup from Pune and drop back to Pune" : o.punePickup ? "Pickup from Pune" : "Drop back to Pune", pp]);
+  }
   (o.addons || []).forEach(k => {
     const a = PRICING.addons[k]; if (!a) return;
     const r = addonRate(k, people);
@@ -658,7 +674,9 @@ function calcPrice(p, o) {
   const subtotal = lines.reduce((t, l) => t + l[1], 0);
   let discount = 0;
   if (PRICING.offer && PRICING.offer.active) discount = Math.min(PRICING.offer.amount, subtotal);
-  return { days, lines, notes, subtotal, discount, rounding: 0, total: subtotal - discount };
+  const total = subtotal - discount;
+  const booking = Math.ceil(total * PRICING.payment.bookingPercent / 100);
+  return { days, lines, notes, subtotal, discount, rounding: 0, total, booking, balance: total - booking };
 }
 function fromPrice(p) {
   if (p.kind === "custom") return "Price on request";

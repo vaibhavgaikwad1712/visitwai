@@ -35,6 +35,11 @@ function mountBooking(host, p) {
         </label>
         <label class="rooms-wrap">Rooms<input name="rooms" type="number" min="1" max="20" value="1"></label>
       </div>` : ""}
+      ${!isDriver ? `<fieldset class="addons"><legend>Pickup and drop</legend>
+        <p class="hint" style="margin:0">Pickup and drop in Wai ${isVilla ? "(bus stand) " : ""}is included. Coming from Pune? Only pickup or only drop: +${inr(PRICING.pune.oneWay)}. Both: +${inr(PRICING.pune.both)}.</p>
+        <label class="check-terms"><input type="checkbox" name="punePickup"><span>Pickup from Pune</span></label>
+        <label class="check-terms"><input type="checkbox" name="puneDrop"><span>Drop back to Pune</span></label>
+      </fieldset>` : ""}
       ${addons.length ? `<fieldset class="addons"><legend>Add-ons</legend>
         ${addons.map(k => {
           const a = PRICING.addons[k];
@@ -73,6 +78,7 @@ function mountBooking(host, p) {
         <h3>${isCustom ? "Custom trip" : "Your price"}</h3>
         <div class="pp-lines"></div>
         <p class="total">Total <b class="pp-total"></b></p>
+        <p class="pay-split small" hidden></p>
         <div class="box-notes"></div>
       </div>
     </aside>
@@ -137,6 +143,8 @@ function mountBooking(host, p) {
     const ad = addonDays();
     return {
       addonDays: ad,
+      punePickup: !!(f.punePickup && f.punePickup.checked),
+      puneDrop: !!(f.puneDrop && f.puneDrop.checked),
       days: Math.max(num(f.days, p.baseDays), minDays),
       people: clamp(num(f.people, 2), 1, 99),
       rooms: f.rooms ? clamp(num(f.rooms, 1), 1, 99) : 1,
@@ -157,11 +165,14 @@ function mountBooking(host, p) {
     linesEl.innerHTML = ""; notesEl.innerHTML = "";
     const note = t => { const el = document.createElement("p"); el.className = "small"; el.textContent = t; notesEl.appendChild(el); };
 
+    panel.querySelector(".pay-split").hidden = true;
     if (isCustom) {
       totalEls.forEach(el => el.textContent = "On request");
+      note(`To confirm, pay ${PRICING.payment.bookingPercent}% of the quoted price as the booking amount. The full balance is paid before the trip starts.`);
       note("Tell us your plan and we'll send you a price, usually within a few hours.");
       if (PRICING.offer && PRICING.offer.active) note(`${inr(PRICING.offer.amount)} off is taken from your quoted price.`);
       if (o.addons.length) note("Add-ons chosen: " + addonText(o));
+      if (o.punePickup || o.puneDrop) note(`Pune ${[o.punePickup && "pickup", o.puneDrop && "drop"].filter(Boolean).join(" and ")}: ${inr(punePrice(o))} is added to your quote.`);
       return;
     }
     const r = calcPrice(p, o);
@@ -180,6 +191,9 @@ function mountBooking(host, p) {
     }
     linesEl.appendChild(t);
     totalEls.forEach(el => el.textContent = inr(r.total));
+    const ps = panel.querySelector(".pay-split");
+    ps.hidden = false;
+    ps.innerHTML = `Pay <b>${inr(r.booking)}</b> now to book (${PRICING.payment.bookingPercent}%). Pay the balance <b>${inr(r.balance)}</b> in full before the trip starts.`;
     r.notes.forEach(note);
     if (isPkg && o.days === 1) note("1-day trip: no hotel stay.");
     if (num(f.kids, 0) > 0) note(`${num(f.kids, 0)} child${num(f.kids, 0) > 1 ? "ren" : ""} under ${PRICING.children.freeUnderAge}: free.`);
@@ -214,9 +228,10 @@ function mountBooking(host, p) {
       rooms: isPkg && o.hotel !== "none" && o.days > 1 ? String(o.rooms) : "-",
       addons: addonText(o) || "None",
       food: f.food ? f.food.value : "-",
-      total: r ? inr(r.total) + (r.discount ? ` (after ${inr(r.discount)} off)` : "") : "Quote needed",
+      pickup: isDriver ? "-" : [o.punePickup ? "Pickup from Pune" : "Pickup in Wai", o.puneDrop ? "Drop to Pune" : "Drop in Wai"].join(", "),
+      total: r ? inr(r.total) + (r.discount ? ` (after ${inr(r.discount)} off)` : "") + ` | Booking amount ${PRICING.payment.bookingPercent}%: ${inr(r.booking)} | Balance before trip: ${inr(r.balance)}` : "Quote needed",
       breakdown: r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).concat(r.discount ? [`Subtotal = ${inr(r.subtotal)}`, `${PRICING.offer.label} = -${inr(r.discount)}`] : []).concat(r.rounding ? [`Rounded off = ${r.rounding > 0 ? "+" : "-"}${inr(Math.abs(r.rounding))}`] : []).concat(r.notes).join(" | ") : "Custom trip",
-      notes: f.notes.value.trim() || "-", terms: "Yes"
+      notes: (v_pick => (f.notes.value.trim() || "-") + (v_pick ? ` | ${v_pick}` : ""))((o.punePickup || o.puneDrop) ? [o.punePickup && "Pune pickup", o.puneDrop && "Pune drop"].filter(Boolean).join(" + ") : ""), terms: "Yes"
     };
     btn.disabled = true; msg.textContent = "Sending your booking…";
     let ok = false;
@@ -236,7 +251,7 @@ function mountBooking(host, p) {
             _template: "table", _captcha: "false",
             Name: v.name, Phone: v.phone, Email: v.email, Package: v.package, "Travel date": v.date,
             [isVilla ? "Nights" : "Days"]: v.days, Adults: v.people, "Children under 5": v.children,
-            Hotel: v.hotel, Rooms: v.rooms, "Add-ons": v.addons, Food: v.food,
+            Hotel: v.hotel, Rooms: v.rooms, "Pickup and drop": v.pickup, "Add-ons": v.addons, Food: v.food,
             Total: v.total, "Price breakdown": v.breakdown, Notes: v.notes, "Terms accepted": v.terms
           })
         });
