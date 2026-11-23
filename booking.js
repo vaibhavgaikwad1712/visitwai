@@ -39,6 +39,11 @@ function mountBooking(host, p) {
         ${addons.map(k => {
           const a = PRICING.addons[k];
           const price = a.perDay === a.perDayLarge ? `${inr(a.perDay)} a day` : `${inr(a.perDay)} a day (${inr(a.perDayLarge)} for ${big}+ people)`;
+          if (a.pickDays) return `<div class="addon-days" data-addon="${k}">
+            <p class="addon-name">${a.label}: ${price}</p>
+            <p class="hint">Tick the days you want it on</p>
+            <div class="day-picks"></div>
+          </div>`;
           return `<label class="check-terms"><input type="checkbox" name="addon" value="${k}"><span>${a.label}: ${price}</span></label>`;
         }).join("")}
       </fieldset>` : ""}
@@ -89,16 +94,59 @@ function mountBooking(host, p) {
     f.rooms.max = people;
     f.rooms.value = Math.ceil(people / 2);
   }
+  // Day tick-boxes for photographer and drone: one per trip day (Day 1, Day 2, …)
+  let shownDays = 0;
+  function renderDayPicks() {
+    const n = clamp(Math.max(num(f.days, p.baseDays), minDays), 1, 15);
+    if (n === shownDays) return;
+    shownDays = n;
+    host.querySelectorAll(".addon-days").forEach(box => {
+      const k = box.dataset.addon, wrap = box.querySelector(".day-picks");
+      const was = new Set([...wrap.querySelectorAll("input:checked")].map(i => +i.value));
+      wrap.innerHTML = Array.from({ length: n }, (_, i) => i + 1).map(d =>
+        `<label class="day-chip"><input type="checkbox" name="day-${k}" value="${d}"${was.has(d) ? " checked" : ""}><span>Day ${d}</span></label>`).join("") +
+        (n > 1 ? `<label class="day-chip all"><input type="checkbox" data-all="${k}"><span>All days</span></label>` : "");
+      syncAll(k);
+    });
+  }
+  function syncAll(k) {
+    const all = host.querySelector(`input[data-all="${k}"]`); if (!all) return;
+    const boxes = [...host.querySelectorAll(`input[name="day-${k}"]`)];
+    all.checked = boxes.length > 0 && boxes.every(b => b.checked);
+  }
+  host.addEventListener("change", e => {
+    const k = e.target.dataset && e.target.dataset.all;
+    if (k) host.querySelectorAll(`input[name="day-${k}"]`).forEach(b => b.checked = e.target.checked);
+    else if (e.target.name && e.target.name.startsWith("day-")) syncAll(e.target.name.slice(4));
+  }, true);
+  function addonDays() {
+    const out = {};
+    host.querySelectorAll(".addon-days").forEach(box => {
+      const k = box.dataset.addon;
+      out[k] = [...box.querySelectorAll(`input[name="day-${k}"]:checked`)].map(i => +i.value);
+    });
+    return out;
+  }
+  function addonText(o) {
+    return o.addons.map(k => {
+      const a = PRICING.addons[k];
+      return a.pickDays && o.addonDays[k] ? `${a.short || a.label} (${dayList(o.addonDays[k])})` : a.label;
+    }).join(", ");
+  }
   function opts() {
+    const ad = addonDays();
     return {
+      addonDays: ad,
       days: Math.max(num(f.days, p.baseDays), minDays),
       people: clamp(num(f.people, 2), 1, 99),
       rooms: f.rooms ? clamp(num(f.rooms, 1), 1, 99) : 1,
       hotel: f.hotel ? f.hotel.value : "none",
       addons: [...f.querySelectorAll("input[name=addon]:checked")].map(i => i.value)
+        .concat(Object.keys(ad).filter(k => ad[k].length))
     };
   }
   function update() {
+    renderDayPicks();
     const o = opts();
     if (num(f.kids, 0) > PRICING.children.maxFree) f.kids.value = PRICING.children.maxFree;
     const nights = isPkg ? o.days - 1 : 0;
@@ -113,7 +161,7 @@ function mountBooking(host, p) {
       totalEls.forEach(el => el.textContent = "On request");
       note("Tell us your plan and we'll send you a price, usually within a few hours.");
       if (PRICING.offer && PRICING.offer.active) note(`${inr(PRICING.offer.amount)} off is taken from your quoted price.`);
-      if (o.addons.length) note("Add-ons chosen: " + o.addons.map(k => PRICING.addons[k].label).join(", "));
+      if (o.addons.length) note("Add-ons chosen: " + addonText(o));
       return;
     }
     const r = calcPrice(p, o);
@@ -164,7 +212,7 @@ function mountBooking(host, p) {
       people: String(o.people), children: String(num(f.kids, 0)),
       hotel: isPkg || isCustom ? (o.hotel === "none" ? "No hotel needed" : o.hotel) : "Not applicable",
       rooms: isPkg && o.hotel !== "none" && o.days > 1 ? String(o.rooms) : "-",
-      addons: o.addons.map(k => PRICING.addons[k].label).join(", ") || "None",
+      addons: addonText(o) || "None",
       food: f.food ? f.food.value : "-",
       total: r ? inr(r.total) + (r.discount ? ` (after ${inr(r.discount)} off)` : "") : "Quote needed",
       breakdown: r ? r.lines.map(l => `${l[0]} = ${inr(l[1])}`).concat(r.discount ? [`Subtotal = ${inr(r.subtotal)}`, `${PRICING.offer.label} = -${inr(r.discount)}`] : []).concat(r.rounding ? [`Rounded off = ${r.rounding > 0 ? "+" : "-"}${inr(Math.abs(r.rounding))}`] : []).concat(r.notes).join(" | ") : "Custom trip",
@@ -194,7 +242,7 @@ function mountBooking(host, p) {
         });
         if (res.ok) ok = true; else if (!ok) throw new Error("send failed");
       }
-      f.reset(); setRooms(); update();
+      f.reset(); shownDays = 0; setRooms(); update();
       msg.innerHTML = 'Booking sent! We\'ll call you soon to confirm. <a class="wa-after" href="#">Also message us on WhatsApp</a>';
       msg.querySelector(".wa-after").href = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(`Hi Visit Wai, I just booked ${v.package} for ${v.date}. My name is ${v.name}.`)}`;
     } catch (err) {

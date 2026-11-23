@@ -238,6 +238,13 @@ table.mini td:last-child{text-align:right;font-weight:700;white-space:nowrap;pad
 .price-box .total b{font-family:var(--display);font-weight:400;font-size:2.2rem;color:var(--berry)}
 fieldset.addons{border:1px solid var(--line);border-radius:12px;padding:.75rem 1rem;display:grid;gap:.5rem}
 fieldset.addons legend{font-weight:500;font-size:.95rem;padding:0 .3rem}
+.addon-days{display:grid;gap:.35rem;padding:.25rem 0 .5rem;border-bottom:1px dashed var(--line)}
+.addon-days .addon-name{margin:0;font-weight:500}
+.addon-days .hint{margin:0;font-size:.85rem;color:var(--soft)}
+.day-picks{display:flex;flex-wrap:wrap;gap:.45rem}
+.day-chip{display:inline-flex;align-items:center;gap:.4rem;border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem .35rem .55rem;cursor:pointer;font-size:.92rem;margin:0}
+.day-chip input{width:auto;margin:0}
+.day-chip:has(input:checked){border-color:var(--berry);color:var(--berry)}
 .form-msg a{color:var(--river);font-weight:700}
 .itin .price-tag{font-weight:700;color:var(--berry);font-size:1.15rem;margin-bottom:.75rem}
 .itin-points{list-style:none;max-width:70ch;margin-bottom:1rem}
