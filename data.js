@@ -43,7 +43,7 @@ const PRICING = {
   },
   payment: { bookingPercent: 30 },     // booking amount to confirm; the full balance is paid before the trip starts
   pune: { oneWay: 3000, both: 5000 },  // Pune pickup OR drop only = oneWay; pickup AND drop = both
-  villa: { perNight: 10999, maxGuests: 8, transfer: 0 },  // transfer: 0 = Wai stand pickup & drop included
+  villa: { perNight: 10999, maxGuests: 8, maxBooking: 30, transfer: 0 },  // price covers maxGuests; extra guests are charged by the villa owner. transfer: 0 = Wai stand pickup & drop included
   // Offer: taken off the FINAL total after all choices. Set active: false to switch it off.
   offer: { active: true, amount: 1000, label: "Visit Wai offer" }
 };
@@ -422,7 +422,8 @@ const PACKAGES = [
     summary: "Just want a private villa with a swimming pool for your gang? A pool villa for 7–8 people at ₹10,999 a night (₹9,999 for one night after the ₹1,000 online offer), with pickup from Wai bus stand to the villa and drop back to Wai.",
     stay: "Private pool villa, up to 8 guests", walking: "None", bestFor: "Groups of 7–8 friends or family",
     points: [
-      "A private villa with its own swimming pool, for up to 8 guests",
+      "A private villa with its own swimming pool; the price covers up to 8 guests",
+      "More than 8 guests? Welcome. The villa owner charges extra per added guest as per the villa's rates",
       "₹10,999 per night for the villa, or ₹9,999 for one night after the ₹1,000 online offer",
       "Pickup from Wai bus stand to the villa and drop back to Wai",
       "Add a photographer or drone shots if you like",
@@ -444,15 +445,17 @@ const PACKAGES = [
     ]
   },
   {
-    id: "custom", group: "other", category: "Custom", kind: "custom", baseDays: 2,
-    name: "Build Your Own Trip",
-    summary: "Want different places, more days, a special occasion or your own pace? Tell us what you have in mind and we'll plan the trip and send you a price.",
-    stay: "As you choose", walking: "As you choose", bestFor: "Anyone with their own plan",
+    id: "custom", group: "other", category: "Custom", kind: "custom", baseDays: 4, minDays: 4,
+    name: "Build Your Own Trip (4 days or more)",
+    summary: "Want 4 days or more in the hills? Visit Wai plans a special itinerary just for you, different from our 2 and 3-day trips, and sends it with the price on email or WhatsApp.",
+    stay: "As you choose", walking: "As you choose", bestFor: "Trips of 4 days or more",
     points: [
-      "Pick the places, days, hotel type and pace you want",
-      "Add a photographer, drone shots or meals",
-      "Birthdays, anniversaries, office outings and school trips welcome",
-      "We reply with a plan and price, usually within a few hours"
+      "For trips of 4 days or more. Our 2 and 3-day packages have fixed itineraries",
+      "Tell us your dates, group, hotel type, pace and any places you want to see",
+      "Visit Wai makes a day-by-day itinerary specially for your trip",
+      "We send you the itinerary and price on email or WhatsApp, wherever your query reached us",
+      "Add a photographer, drone shots, meals or Pune pickup and drop",
+      "Birthdays, anniversaries, office outings and school trips welcome"
     ]
   }
 ];
@@ -573,7 +576,7 @@ function punePrice(o) {
 /* What every package includes / excludes (shown on each package page) */
 function includesFor(p) {
   if (p.kind === "villa") return {
-    yes: ["Private pool villa for up to 8 guests", "Pickup from Wai bus stand to the villa and drop back to Wai", puneLine()],
+    yes: ["Private pool villa (price covers up to 8 guests; extra guests are charged by the villa owner)", "Pickup from Wai bus stand to the villa and drop back to Wai", puneLine()],
     no: ["Food and drinks, unless arranged with the villa", "Sightseeing and activities", "Photographer, drone and other add-ons unless selected"]
   };
   if (p.kind === "driver") return {
@@ -581,7 +584,7 @@ function includesFor(p) {
     no: ["Fuel, tolls and parking for your car", "Hotel stay and entry tickets", "Add-ons unless selected"]
   };
   if (p.kind === "custom") return {
-    yes: ["A trip planned around your places, days, pace and budget"],
+    yes: ["A day-by-day itinerary made by Visit Wai for your trip of 4 days or more", "Itinerary and price sent to you on email or WhatsApp"],
     no: ["Price is sent to you after we plan the trip"]
   };
   const yes = [
@@ -635,14 +638,14 @@ function calcPrice(p, o) {
   const s = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
   const lines = [], notes = [];
   if (p.kind === "villa") {
-    if (people > PRICING.villa.maxGuests) return { error: `The pool villa takes up to ${PRICING.villa.maxGuests} guests. Choose "Build Your Own Trip" for bigger groups.` };
+    if (people > PRICING.villa.maxGuests) notes.push(`${s(people - PRICING.villa.maxGuests, "extra guest")} above ${PRICING.villa.maxGuests}: the villa owner charges extra per added guest as per the villa's rates. This is added when we confirm.`);
     lines.push([`Pool villa: ${s(days, "night")} × ${inr(PRICING.villa.perNight)}`, PRICING.villa.perNight * days]);
     if (PRICING.villa.transfer > 0) lines.push(["Wai stand pickup and drop", PRICING.villa.transfer]);
     else notes.push("Pickup from Wai bus stand and drop back to Wai included.");
   } else if (p.kind === "driver") {
     lines.push([`Driver: ${s(days, "day")} × ${inr(PRICING.driverOnlyPerDay)}`, PRICING.driverOnlyPerDay * days]);
   } else {
-    if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, choose "Build Your Own Trip".` };
+    if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, message us on WhatsApp and we'll plan it with you.` };
     const rate = tierRate(people), nights = days - 1;
     lines.push([`Package for ${people} ${people > 1 ? "adults" : "adult"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
     if (nights > 0 && o.hotel === "none") {
@@ -689,7 +692,7 @@ function fromPrice(p) {
   if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
   if (p.kind === "villa") {
     const off = PRICING.offer && PRICING.offer.active ? PRICING.offer.amount : 0;
-    return `${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests` + (off ? ` (${inr(PRICING.villa.perNight - off)} for 1 night after offer)` : "");
+    return `${inr(PRICING.villa.perNight)} / night for up to ${PRICING.villa.maxGuests} guests` + (off ? ` (${inr(PRICING.villa.perNight - off)} for 1 night after offer)` : "");
   }
   const r = calcPrice(p, { days: p.baseDays, people: 2, rooms: 1, hotel: PRICING.includedHotel, addons: [] });
   return `From ${inr(r.subtotal)} for 2 adults` + (p.baseDays > 1 ? ", stay included" : "");

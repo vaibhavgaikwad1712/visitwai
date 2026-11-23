@@ -8,7 +8,21 @@ function mountBooking(host, p) {
   const base = PRICING.hotelsPerNight[PRICING.includedHotel];
   const addons = addonsFor(p);
   const big = PRICING.addons.largeGroupFrom;
-  const minDays = isPkg && p.id !== "ancient-wai" ? p.baseDays : 1;
+  // 2 and 3-day packages follow a fixed itinerary, so their days can't be changed.
+  // Ancient Wai is 1 or 2 days. 4 days or more = Build Your Own Trip.
+  const fixedDays = isPkg && p.id !== "ancient-wai";
+  const minDays = fixedDays ? p.baseDays : (p.minDays || 1);
+  const customLink = `<a href="${pkgPage(PACKAGES.find(x => x.kind === "custom"))}#book">Build Your Own Trip</a>`;
+  const daysField = fixedDays
+    ? `<label>Number of days<input name="days" type="number" value="${p.baseDays}" min="${p.baseDays}" max="${p.baseDays}" readonly class="fixed-days">
+        <span class="hint">This itinerary is for ${p.baseDays} days. Want 4 days or more? ${customLink}</span></label>`
+    : isPkg
+    ? `<label>Number of days<select name="days"><option value="1">1 day</option><option value="2">2 days</option></select>
+        <span class="hint">Want 4 days or more? ${customLink}</span></label>`
+    : isCustom
+    ? `<label>Number of days<input name="days" type="number" min="${minDays}" max="30" value="${p.baseDays}">
+        <span class="hint">4 days or more. We make your itinerary and send it on email or WhatsApp.</span></label>`
+    : `<label>${isVilla ? "Number of nights" : "Number of days"}<input name="days" type="number" min="${minDays}" max="15" value="${p.baseDays}"></label>`;
 
   host.innerHTML = `
   <div class="book-grid">
@@ -16,10 +30,10 @@ function mountBooking(host, p) {
       <h3>Your trip details</h3>
       <div class="row">
         <label>Travel date<input name="date" type="date"></label>
-        <label>${isVilla ? "Number of nights" : "Number of days"}<input name="days" type="number" min="${minDays}" max="15" value="${p.baseDays}"></label>
+        ${daysField}
       </div>
       <div class="row">
-        <label>Number of adults <span class="hint">(children 5+ count as adults)</span><input name="people" type="number" min="1" max="${isVilla ? PRICING.villa.maxGuests : PRICING.maxPeople}" value="${isVilla ? PRICING.villa.maxGuests : 2}"></label>
+        <label>Number of adults <span class="hint">(children 5+ count as adults)</span><input name="people" type="number" min="1" max="${isVilla ? PRICING.villa.maxBooking : PRICING.maxPeople}" value="${isVilla ? PRICING.villa.maxGuests : 2}"></label>
         <label>Children under ${PRICING.children.freeUnderAge} (free, max ${PRICING.children.maxFree})<input name="kids" type="number" min="0" max="${PRICING.children.maxFree}" value="0"></label>
       </div>
       ${isPkg || isCustom ? `
@@ -103,7 +117,7 @@ function mountBooking(host, p) {
   // Day tick-boxes for photographer and drone: one per trip day (Day 1, Day 2, …)
   let shownDays = 0;
   function renderDayPicks() {
-    const n = clamp(Math.max(num(f.days, p.baseDays), minDays), 1, 15);
+    const n = fixedDays ? p.baseDays : clamp(Math.max(num(f.days, p.baseDays), minDays), 1, 30);
     if (n === shownDays) return;
     shownDays = n;
     host.querySelectorAll(".addon-days").forEach(box => {
@@ -145,7 +159,7 @@ function mountBooking(host, p) {
       addonDays: ad,
       punePickup: !!(f.punePickup && f.punePickup.checked),
       puneDrop: !!(f.puneDrop && f.puneDrop.checked),
-      days: Math.max(num(f.days, p.baseDays), minDays),
+      days: fixedDays ? p.baseDays : Math.max(num(f.days, p.baseDays), minDays),
       people: clamp(num(f.people, 2), 1, 99),
       rooms: f.rooms ? clamp(num(f.rooms, 1), 1, 99) : 1,
       hotel: f.hotel ? f.hotel.value : "none",
@@ -169,7 +183,7 @@ function mountBooking(host, p) {
     if (isCustom) {
       totalEls.forEach(el => el.textContent = "On request");
       note(`To confirm, pay ${PRICING.payment.bookingPercent}% of the quoted price as the booking amount. The full balance is paid before the trip starts.`);
-      note("Tell us your plan and we'll send you a price, usually within a few hours.");
+      note("Tell us your plan. Visit Wai will make a day-by-day itinerary for your trip and send it with the price on email or WhatsApp, usually within a few hours.");
       if (PRICING.offer && PRICING.offer.active) note(`${inr(PRICING.offer.amount)} off is taken from your quoted price.`);
       if (o.addons.length) note("Add-ons chosen: " + addonText(o));
       if (o.punePickup || o.puneDrop) note(`Pune ${[o.punePickup && "pickup", o.puneDrop && "drop"].filter(Boolean).join(" and ")}: ${inr(punePrice(o))} is added to your quote.`);
@@ -201,6 +215,7 @@ function mountBooking(host, p) {
 
   f.people.addEventListener("input", () => { setRooms(); update(); });
   f.addEventListener("input", e => { if (e.target !== f.people) update(); });
+  f.days.addEventListener("change", () => { if (!fixedDays && f.days.tagName === "INPUT" && num(f.days, minDays) < minDays) { f.days.value = minDays; update(); } });
   f.addEventListener("change", update);
   bar.querySelector(".pb-toggle").addEventListener("click", () => panel.classList.toggle("open"));
   panel.addEventListener("click", e => { if (e.target === panel) panel.classList.remove("open"); });
