@@ -16,22 +16,22 @@ const SITE = {
    ===================================================================== */
 const PRICING = {
   // Package cost per day, by group size (adults + children aged 5 and above).
-  // A budget stay (worth ₹999 per room per night) is INCLUDED in this price.
+  // A budget stay (worth ₹1,000 per room per night) is INCLUDED in this price.
   packageTiers: [
-    { upTo: 3,  perDay: 5499 },    // 1–3 people (priced for 2; a 3rd person shares a room)
-    { upTo: 6,  perDay: 7499 },    // 4–6 people
-    { upTo: 14, perDay: 9499 },    // 7–14 people
-    { upTo: 20, perDay: 11499 }    // 15–20 people
+    { upTo: 3,  perDay: 5500 },    // 1–3 people (priced for 2; a 3rd person shares a room)
+    { upTo: 6,  perDay: 7500 },    // 4–6 people
+    { upTo: 14, perDay: 9500 },    // 7–14 people
+    { upTo: 20, perDay: 11500 }    // 15–20 people
   ],
   maxPeople: 20,
   children: { freeUnderAge: 5, maxFree: 2 },   // up to 2 children under 5 travel free
   includedHotel: "Budget",          // this hotel type is included in the package price
   hotelsPerNight: {                 // value of each hotel type, per room (2 people) per night
-    "Budget": 999,
-    "2 star": 1499,
-    "3 star": 2999,
-    "4 star": 4999,
-    "5 star": 9999
+    "Budget": 1000,
+    "2 star": 2500,
+    "3 star": 4000,
+    "4 star": 6000,
+    "5 star": 11000
   },
   driverOnlyPerDay: 1999,           // our driver for the customer's own car
   addons: {                         // per day; larger price from largeGroupFrom people
@@ -40,11 +40,24 @@ const PRICING = {
     drone: { label: "Drone shots (up to 10 shots a day)", perDay: 2499, perDayLarge: 4999 },
     caretaker: { label: "Caretaker for elders", perDay: 999, perDayLarge: 999, onlyFor: ["seniors-2", "seniors-3"] }
   },
-  villa: { perNight: 9999, maxGuests: 8, transfer: 0 },  // transfer: 0 = Wai stand pickup & drop included
-  // Offer: taken off the FINAL total after all choices. Set active: false to switch it off.
-  offer: { active: true, amount: 1000, label: "Visit Wai offer" }
+  villa: {
+    perNight: 9999,                 // what the customer pays per night while the offer runs
+    regularPerNight: 10999,         // regular price per night (shown crossed out during the offer)
+    offerLabel: "Launch offer",     // name of the discount line
+    offerEnds: "2027-01-31",        // last day of the offer (YYYY-MM-DD); after this the regular price applies
+    maxGuests: 8,
+    transfer: 0                     // 0 = Wai stand pickup & drop included
+  }
 };
-const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+const inr = n => (n < 0 ? "−₹" : "₹") + Math.abs(Math.round(n)).toLocaleString("en-IN");
+// Villa offer: true while today is on or before PRICING.villa.offerEnds
+function villaOfferOn() {
+  const v = PRICING.villa;
+  if (!v.regularPerNight || v.regularPerNight <= v.perNight || !v.offerEnds) return false;
+  return new Date() <= new Date(v.offerEnds + "T23:59:59");
+}
+function villaRate() { return villaOfferOn() ? PRICING.villa.perNight : (PRICING.villa.regularPerNight || PRICING.villa.perNight); }
+const strike = t => t.split("").map(c => c + "\u0336").join("");
 
 /* =====================================================================
    GOOGLE FORM — bookings are saved to your Google Form (and its Sheet).
@@ -454,105 +467,6 @@ const PACKAGES = [
   }
 ];
 
-/* =====================================================================
-   PHOTOS — put each photo in images/<package-id>/<name>.jpg
-   (e.g. images/couples-2/hero.jpg). Missing photos are skipped, and a
-   scenic illustration shows instead, so the site never looks broken.
-   Set ai: true on any AI-generated image so it is labelled honestly.
-   Set credit: "Photo: Name" if a photo needs credit.
-   ===================================================================== */
-const PHOTOS = {
-  "couples-2": [
-    { file: "images/couples-2/hero.jpg", alt: "Couple watching the sunset from Bombay Point, Mahabaleshwar", caption: "Sunset at Bombay Point", drone: false, ai: false, credit: "" },
-    { file: "images/couples-2/venna.jpg", alt: "Couple in a rowing boat on Venna Lake in golden light", caption: "Boating on Venna Lake", drone: false, ai: false, credit: "" },
-    { file: "images/couples-2/strawberries.jpg", alt: "Bowl of fresh strawberries with cream at Mapro Garden", caption: "Strawberries with cream", drone: false, ai: false, credit: "" },
-    { file: "images/couples-2/arthurs-seat.jpg", alt: "Deep valley view from Arthur's Seat with clouds below", caption: "Arthur's Seat", drone: false, ai: false, credit: "" },
-    { file: "images/couples-2/drone-tableland.jpg", alt: "Aerial drone view of Table Land plateau in Panchgani", caption: "Table Land from the air", drone: true, ai: false, credit: "" },
-  ],
-  "families-2": [
-    { file: "images/families-2/hero.jpg", alt: "Family on a pony cart ride at Table Land, Panchgani", caption: "Pony carts on Table Land", drone: false, ai: false, credit: "" },
-    { file: "images/families-2/echo-point.jpg", alt: "Children shouting at Echo Point, Mahabaleshwar", caption: "Echo Point", drone: false, ai: false, credit: "" },
-    { file: "images/families-2/adventure-park.jpg", alt: "Kids on go-karts at an adventure park in Panchgani", caption: "Adventure park", drone: false, ai: false, credit: "" },
-    { file: "images/families-2/mapro.jpg", alt: "Family at Mapro Garden with strawberry shakes", caption: "Mapro Garden", drone: false, ai: false, credit: "" },
-    { file: "images/families-2/drone-venna.jpg", alt: "Aerial drone view of Venna Lake with boats", caption: "Venna Lake from the air", drone: true, ai: false, credit: "" },
-  ],
-  "seniors-2": [
-    { file: "images/seniors-2/hero.jpg", alt: "Elderly couple on a bench at a valley viewpoint", caption: "Unhurried views", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-2/temple.jpg", alt: "Old Mahabaleshwar Shiva temple courtyard", caption: "Mahabaleshwar temple", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-2/mapro-seating.jpg", alt: "Shaded garden seating at Mapro Garden", caption: "Mapro Garden", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-2/venna-lakeside.jpg", alt: "Calm lakeside at Venna Lake in the evening", caption: "Venna lakeside", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-2/drone-krishna.jpg", alt: "Aerial drone view of the Krishna valley and Dhom dam", caption: "Krishna valley from the air", drone: true, ai: false, credit: "" },
-  ],
-  "groups-2": [
-    { file: "images/groups-2/hero.jpg", alt: "Tandem paraglider over the Krishna valley at Panchgani", caption: "Paragliding at Panchgani", drone: false, ai: false, credit: "" },
-    { file: "images/groups-2/zipline.jpg", alt: "Friend group on a zip line at an adventure park", caption: "Zip line", drone: false, ai: false, credit: "" },
-    { file: "images/groups-2/bonfire.jpg", alt: "Group of friends around a hotel bonfire at night", caption: "Bonfire night", drone: false, ai: false, credit: "" },
-    { file: "images/groups-2/wilson-sunrise.jpg", alt: "Group watching sunrise at Wilson Point", caption: "Wilson Point sunrise", drone: false, ai: false, credit: "" },
-    { file: "images/groups-2/drone-tableland.jpg", alt: "Aerial drone view of Table Land plateau with people", caption: "Table Land from the air", drone: true, ai: false, credit: "" },
-  ],
-  "couples-3": [
-    { file: "images/couples-3/hero.jpg", alt: "Couple kayaking on Shivsagar lake at Tapola", caption: "Kayaking at Tapola", drone: false, ai: false, credit: "" },
-    { file: "images/couples-3/devrai.jpg", alt: "Adivasi artisan working on brass at Devrai Art Village", caption: "Devrai Art Village", drone: false, ai: false, credit: "" },
-    { file: "images/couples-3/bhilar.jpg", alt: "Couple reading books on a veranda at Bhilar Book Village", caption: "Bhilar Book Village", drone: false, ai: false, credit: "" },
-    { file: "images/couples-3/dhom-sunset.jpg", alt: "Sunset over Dhom dam backwaters near Wai", caption: "Dhom Dam sunset", drone: false, ai: false, credit: "" },
-    { file: "images/couples-3/drone-tapola.jpg", alt: "Aerial drone view of Tapola lake and green hills", caption: "Tapola from the air", drone: true, ai: false, credit: "" },
-  ],
-  "families-3": [
-    { file: "images/families-3/hero.jpg", alt: "Pratapgad Fort walls and gate with hills behind", caption: "Pratapgad Fort", drone: false, ai: false, credit: "" },
-    { file: "images/families-3/kids-books.jpg", alt: "Children reading storybooks at Bhilar Book Village", caption: "Storybooks at Bhilar", drone: false, ai: false, credit: "" },
-    { file: "images/families-3/strawberry-picking.jpg", alt: "Family picking strawberries at a farm in Mahabaleshwar", caption: "Strawberry picking", drone: false, ai: false, credit: "" },
-    { file: "images/families-3/rides.jpg", alt: "Family on rides at an amusement park in Panchgani", caption: "Amusement park day", drone: false, ai: false, credit: "" },
-    { file: "images/families-3/drone-pratapgad.jpg", alt: "Aerial drone view of Pratapgad Fort on its hilltop", caption: "Pratapgad from the air", drone: true, ai: false, credit: "" },
-  ],
-  "seniors-3": [
-    { file: "images/seniors-3/hero.jpg", alt: "Elderly couple enjoying the view at Kate's Point", caption: "Kate's Point", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-3/panchganga.jpg", alt: "Panchganga temple, source of the Krishna river", caption: "Panchganga temple", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-3/devrai-seated.jpg", alt: "Elders watching an artisan at Devrai Art Village", caption: "Devrai artisans", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-3/bhilar-reading.jpg", alt: "Shaded reading corner at Bhilar Book Village", caption: "Reading at Bhilar", drone: false, ai: false, credit: "" },
-    { file: "images/seniors-3/drone-plateau.jpg", alt: "Aerial drone view of Panchgani hills and plateau", caption: "Panchgani from the air", drone: true, ai: false, credit: "" },
-  ],
-  "groups-3": [
-    { file: "images/groups-3/hero.jpg", alt: "Group trekking up to Pandavgad Fort near Wai", caption: "Pandavgad trek", drone: false, ai: false, credit: "" },
-    { file: "images/groups-3/water-sports.jpg", alt: "Friends on a speed boat at Dhom dam", caption: "Dhom water sports", drone: false, ai: false, credit: "" },
-    { file: "images/groups-3/paragliding.jpg", alt: "Paraglider taking off from Harrison's Folly", caption: "Paragliding", drone: false, ai: false, credit: "" },
-    { file: "images/groups-3/kayaks.jpg", alt: "Group of kayaks on Shivsagar lake at Tapola", caption: "Kayaks at Tapola", drone: false, ai: false, credit: "" },
-    { file: "images/groups-3/drone-fort.jpg", alt: "Aerial drone view of a Sahyadri hill fort", caption: "Fort from the air", drone: true, ai: false, credit: "" },
-  ],
-  "ancient-wai": [
-    { file: "images/ancient-wai/hero.jpg", alt: "Dholya Ganpati temple on the Krishna ghat in Wai", caption: "Dholya Ganpati, Wai", drone: false, ai: false, credit: "" },
-    { file: "images/ancient-wai/menavali.jpg", alt: "Temples on Menavali ghat by the Krishna river", caption: "Menavali Ghat", drone: false, ai: false, credit: "" },
-    { file: "images/ancient-wai/wada.jpg", alt: "Courtyard and teak lattice of Nana Phadnavis Wada", caption: "Nana Phadnavis Wada", drone: false, ai: false, credit: "" },
-    { file: "images/ancient-wai/caves.jpg", alt: "Rock-cut Buddhist caves at Lohare near Wai", caption: "Wai Caves", drone: false, ai: false, credit: "" },
-    { file: "images/ancient-wai/drone-ghats.jpg", alt: "Aerial drone view of the Krishna river ghats in Wai", caption: "Wai ghats from the air", drone: true, ai: false, credit: "" },
-  ],
-  "scenic-hidden": [
-    { file: "images/scenic-hidden/hero.jpg", alt: "Morning mist over the Krishna river at Menavali", caption: "Mist at Menavali", drone: false, ai: false, credit: "" },
-    { file: "images/scenic-hidden/borgaon.jpg", alt: "Waterfall near Borgaon in the monsoon", caption: "Borgaon waterfalls", drone: false, ai: false, credit: "" },
-    { file: "images/scenic-hidden/kates-sunrise.jpg", alt: "Sunrise from Kate's Point over the valley", caption: "Kate's Point sunrise", drone: false, ai: false, credit: "" },
-    { file: "images/scenic-hidden/needle-hole.jpg", alt: "Needle Hole rock arch at Elephant's Head Point", caption: "Needle Hole Point", drone: false, ai: false, credit: "" },
-    { file: "images/scenic-hidden/drone-backwaters.jpg", alt: "Aerial drone view of Dhom and Balkawadi backwaters", caption: "Backwaters from the air", drone: true, ai: false, credit: "" },
-  ],
-  "pool-villa": [
-    { file: "images/pool-villa/hero.jpg", alt: "Private pool villa lit up at dusk in the hills", caption: "Your pool villa", drone: false, ai: false, credit: "" },
-    { file: "images/pool-villa/pool-friends.jpg", alt: "Friends relaxing by a private villa pool", caption: "Pool time", drone: false, ai: false, credit: "" },
-    { file: "images/pool-villa/bedroom.jpg", alt: "Bright villa bedroom with a hill view", caption: "Villa rooms", drone: false, ai: false, credit: "" },
-    { file: "images/pool-villa/balcony.jpg", alt: "Balcony view over the valley from the villa", caption: "Valley view", drone: false, ai: false, credit: "" },
-    { file: "images/pool-villa/drone-villa.jpg", alt: "Aerial drone view of the villa and its pool", caption: "Villa from the air", drone: true, ai: false, credit: "" },
-  ],
-  "driver-only": [
-    { file: "images/driver-only/hero.jpg", alt: "Car on the winding Pasarni ghat road", caption: "Pasarni Ghat road", drone: false, ai: false, credit: "" },
-    { file: "images/driver-only/driver.jpg", alt: "Local driver opening the car door for a family", caption: "Your driver", drone: false, ai: false, credit: "" },
-    { file: "images/driver-only/viewpoint-car.jpg", alt: "Family car parked at a hill viewpoint", caption: "Stop where you like", drone: false, ai: false, credit: "" },
-    { file: "images/driver-only/drone-ghat.jpg", alt: "Aerial drone view of ghat road hairpin bends", caption: "Ghat road from the air", drone: true, ai: false, credit: "" },
-  ],
-  "custom": [
-    { file: "images/custom/hero.jpg", alt: "Panorama of the Mahabaleshwar hills with clouds", caption: "Your trip, your way", drone: false, ai: false, credit: "" },
-    { file: "images/custom/lingmala.jpg", alt: "Lingmala waterfall in the monsoon", caption: "Lingmala Waterfall", drone: false, ai: false, credit: "" },
-    { file: "images/custom/sunrise.jpg", alt: "Sunrise over layered Sahyadri hills", caption: "Sahyadri sunrise", drone: false, ai: false, credit: "" },
-    { file: "images/custom/drone-panchgani.jpg", alt: "Aerial drone view of Panchgani town and hills", caption: "Panchgani from the air", drone: true, ai: false, credit: "" },
-  ],
-};
-
 const GROUP_LABELS = { "2day": "2-day packages", "3day": "3-day packages", "special": "Special packages", "other": "Pool villa, driver-only & custom trips" };
 
 /* Each package has its own page: trip-<id>.html */
@@ -591,8 +505,6 @@ function includesFor(p) {
    - Villa: villa rate × nights (o.days = nights), plus transfer if set.
    - Driver only: driver rate × days.
    - Add-ons: per day, larger price from PRICING.addons.largeGroupFrom people. */
-/* Round to the nearest amount ending in 99 (10,998 → 10,999; 26,992 → 26,999) */
-const to99 = n => n <= 0 ? 0 : Math.max(99, Math.round((n + 1) / 100) * 100 - 1);
 function tierRate(people) {
   const t = PRICING.packageTiers.find(t => people <= t.upTo);
   return t ? t.perDay : null;
@@ -606,8 +518,7 @@ function addonsFor(p) {
 }
 function hotelUpgrade(hotel) {
   const r = PRICING.hotelsPerNight[hotel], base = PRICING.hotelsPerNight[PRICING.includedHotel];
-  if (!r || r <= base) return 0;
-  return Math.ceil((r - base) / 100) * 100 - 1;   // keep prices in the xx99 style: 500 → 499, 2,000 → 1,999
+  return r ? Math.max(0, r - base) : 0;
 }
 function calcPrice(p, o) {
   if (!p || p.kind === "custom") return null;
@@ -617,7 +528,13 @@ function calcPrice(p, o) {
   const lines = [], notes = [];
   if (p.kind === "villa") {
     if (people > PRICING.villa.maxGuests) return { error: `The pool villa takes up to ${PRICING.villa.maxGuests} guests. Choose "Build Your Own Trip" for bigger groups.` };
-    lines.push([`Pool villa: ${s(days, "night")} × ${inr(PRICING.villa.perNight)}`, PRICING.villa.perNight * days]);
+    if (villaOfferOn()) {
+      const reg = PRICING.villa.regularPerNight;
+      lines.push([`Pool villa: ${s(days, "night")} × ${inr(reg)}`, reg * days]);
+      lines.push([`${PRICING.villa.offerLabel}: ${inr(reg - PRICING.villa.perNight)} off per night`, -(reg - PRICING.villa.perNight) * days]);
+    } else {
+      lines.push([`Pool villa: ${s(days, "night")} × ${inr(villaRate())}`, villaRate() * days]);
+    }
     if (PRICING.villa.transfer > 0) lines.push(["Wai stand pickup and drop", PRICING.villa.transfer]);
     else notes.push("Pickup from Wai bus stand and drop back to Wai included.");
   } else if (p.kind === "driver") {
@@ -625,7 +542,7 @@ function calcPrice(p, o) {
   } else {
     if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, choose "Build Your Own Trip".` };
     const rate = tierRate(people), nights = days - 1;
-    lines.push([`Package for ${people} ${people > 1 ? "adults" : "adult"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
+    lines.push([`Package for ${people} ${people > 1 ? "people" : "person"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
     if (nights > 0 && o.hotel !== "none") {
       const rooms = Math.max(1, parseInt(o.rooms, 10) || Math.ceil(people / 2));
       const up = hotelUpgrade(o.hotel);
@@ -641,33 +558,22 @@ function calcPrice(p, o) {
     const r = addonRate(k, people);
     lines.push([`${a.label}: ${s(days, "day")} × ${inr(r)}`, r * days]);
   });
-  const subtotal = lines.reduce((t, l) => t + l[1], 0);
-  let discount = 0;
-  if (PRICING.offer && PRICING.offer.active) discount = Math.min(PRICING.offer.amount, subtotal);
-  return { days, lines, notes, subtotal, discount, rounding: 0, total: subtotal - discount };
+  return { days, lines, notes, total: lines.reduce((t, l) => t + l[1], 0) };
 }
 function fromPrice(p) {
   if (p.kind === "custom") return "Price on request";
   if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
-  if (p.kind === "villa") return `${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests`;
+  if (p.kind === "villa") return villaOfferOn()
+    ? `${strike(inr(PRICING.villa.regularPerNight))} ${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests`
+    : `${inr(villaRate())} / night, up to ${PRICING.villa.maxGuests} guests`;
   const r = calcPrice(p, { days: p.baseDays, people: 2, rooms: 1, hotel: PRICING.includedHotel, addons: [] });
-  return `From ${inr(r.subtotal)} for 2 adults` + (p.baseDays > 1 ? ", stay included" : "");
+  return `From ${inr(r.total)} for 2 people` + (p.baseDays > 1 ? ", stay included" : "");
 }
 function pkgLabel(p) {
   if (p.kind) return p.name;
   const len = p.group === "2day" ? "2-day" : p.group === "3day" ? "3-day" : (p.id === "ancient-wai" ? "1–2 days" : "2-day");
   return `${p.name} (${p.category}, ${len})`;
 }
-
-/* Photo helpers: show an image only if the file loads; otherwise keep the fallback */
-function photoImg(ph, cls) {
-  const img = new Image();
-  img.className = cls || ""; img.alt = ph.alt; img.decoding = "async";
-  img.src = ph.file;
-  return img;
-}
-const sceneFor = id => `images/scenes/${id}.svg`;   // illustrated scene shown until a real photo is uploaded
-function heroPhoto(id) { return (PHOTOS[id] || [])[0]; }
 
 /* Shared page behaviour: menu, year, contact details */
 document.addEventListener("DOMContentLoaded", () => {

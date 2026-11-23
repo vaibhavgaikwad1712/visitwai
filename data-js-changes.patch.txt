@@ -1,0 +1,70 @@
+--- /tmp/claude-0/data.orig.js	2026-11-23 09:22:30.870629695 +0000
++++ data.js	2026-11-23 09:22:42.966949922 +0000
+@@ -28,10 +28,10 @@
+   includedHotel: "Budget",          // this hotel type is included in the package price
+   hotelsPerNight: {                 // value of each hotel type, per room (2 people) per night
+     "Budget": 1000,
+-    "2 star": 1500,
+-    "3 star": 3000,
+-    "4 star": 5000,
+-    "5 star": 10000
++    "2 star": 2500,
++    "3 star": 4000,
++    "4 star": 6000,
++    "5 star": 11000
+   },
+   driverOnlyPerDay: 1999,           // our driver for the customer's own car
+   addons: {                         // per day; larger price from largeGroupFrom people
+@@ -40,9 +40,24 @@
+     drone: { label: "Drone shots (up to 10 shots a day)", perDay: 2499, perDayLarge: 4999 },
+     caretaker: { label: "Caretaker for elders", perDay: 999, perDayLarge: 999, onlyFor: ["seniors-2", "seniors-3"] }
+   },
+-  villa: { perNight: 9999, maxGuests: 8, transfer: 0 }   // transfer: 0 = Wai stand pickup & drop included
++  villa: {
++    perNight: 9999,                 // what the customer pays per night while the offer runs
++    regularPerNight: 10999,         // regular price per night (shown crossed out during the offer)
++    offerLabel: "Launch offer",     // name of the discount line
++    offerEnds: "2027-01-31",        // last day of the offer (YYYY-MM-DD); after this the regular price applies
++    maxGuests: 8,
++    transfer: 0                     // 0 = Wai stand pickup & drop included
++  }
+ };
+-const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
++const inr = n => (n < 0 ? "−₹" : "₹") + Math.abs(Math.round(n)).toLocaleString("en-IN");
++// Villa offer: true while today is on or before PRICING.villa.offerEnds
++function villaOfferOn() {
++  const v = PRICING.villa;
++  if (!v.regularPerNight || v.regularPerNight <= v.perNight || !v.offerEnds) return false;
++  return new Date() <= new Date(v.offerEnds + "T23:59:59");
++}
++function villaRate() { return villaOfferOn() ? PRICING.villa.perNight : (PRICING.villa.regularPerNight || PRICING.villa.perNight); }
++const strike = t => t.split("").map(c => c + "\u0336").join("");
+ 
+ /* =====================================================================
+    GOOGLE FORM — bookings are saved to your Google Form (and its Sheet).
+@@ -513,7 +528,13 @@
+   const lines = [], notes = [];
+   if (p.kind === "villa") {
+     if (people > PRICING.villa.maxGuests) return { error: `The pool villa takes up to ${PRICING.villa.maxGuests} guests. Choose "Build Your Own Trip" for bigger groups.` };
+-    lines.push([`Pool villa: ${s(days, "night")} × ${inr(PRICING.villa.perNight)}`, PRICING.villa.perNight * days]);
++    if (villaOfferOn()) {
++      const reg = PRICING.villa.regularPerNight;
++      lines.push([`Pool villa: ${s(days, "night")} × ${inr(reg)}`, reg * days]);
++      lines.push([`${PRICING.villa.offerLabel}: ${inr(reg - PRICING.villa.perNight)} off per night`, -(reg - PRICING.villa.perNight) * days]);
++    } else {
++      lines.push([`Pool villa: ${s(days, "night")} × ${inr(villaRate())}`, villaRate() * days]);
++    }
+     if (PRICING.villa.transfer > 0) lines.push(["Wai stand pickup and drop", PRICING.villa.transfer]);
+     else notes.push("Pickup from Wai bus stand and drop back to Wai included.");
+   } else if (p.kind === "driver") {
+@@ -542,7 +563,9 @@
+ function fromPrice(p) {
+   if (p.kind === "custom") return "Price on request";
+   if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
+-  if (p.kind === "villa") return `${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests`;
++  if (p.kind === "villa") return villaOfferOn()
++    ? `${strike(inr(PRICING.villa.regularPerNight))} ${inr(PRICING.villa.perNight)} / night, up to ${PRICING.villa.maxGuests} guests`
++    : `${inr(villaRate())} / night, up to ${PRICING.villa.maxGuests} guests`;
+   const r = calcPrice(p, { days: p.baseDays, people: 2, rooms: 1, hotel: PRICING.includedHotel, addons: [] });
+   return `From ${inr(r.total)} for 2 people` + (p.baseDays > 1 ? ", stay included" : "");
+ }
