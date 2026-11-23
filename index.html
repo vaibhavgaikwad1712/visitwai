@@ -255,7 +255,8 @@
     const row = `<tr><td>${lo}–${t.upTo} people</td><td>${inr(t.perDay)}</td></tr>`; lo = t.upTo + 1; return row;
   }).join('');
   document.getElementById('pHotels').innerHTML = Object.keys(PRICING.hotelsPerNight)
-    .map(k => `<tr><td>${k}</td><td>${k === PRICING.includedHotel ? 'Included' : '+' + inr(hotelUpgrade(k))}</td></tr>`).join('');
+    .map(k => `<tr><td>${k}</td><td>${k === PRICING.includedHotel ? 'Included' : '+' + inr(hotelUpgrade(k))}</td></tr>`).join('') +
+    `<tr><td>No hotel needed (travel only)</td><td>${inr(-PRICING.hotelsPerNight[PRICING.includedHotel])}</td></tr>`;
   const big = PRICING.addons.largeGroupFrom;
   document.getElementById('pAddons').innerHTML = `<tr><td>Caretaker for elders (seniors packages)</td><td>${inr(PRICING.addons.caretaker.perDay)}</td></tr>` + ['photographer', 'drone'].map(k => {
     const a = PRICING.addons[k], short = k === 'photographer' ? 'Photographer (DSLR)' : 'Drone, up to 10 shots';

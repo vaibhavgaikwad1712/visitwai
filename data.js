@@ -47,7 +47,7 @@ const PRICING = {
   // Offer: taken off the FINAL total after all choices. Set active: false to switch it off.
   offer: { active: true, amount: 1000, label: "Visit Wai offer" }
 };
-const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+const inr = n => (n < 0 ? "−₹" : "₹") + Math.abs(Math.round(n)).toLocaleString("en-IN");
 
 /* =====================================================================
    GOOGLE FORM — bookings are saved to your Google Form (and its Sheet).
@@ -645,6 +645,12 @@ function calcPrice(p, o) {
     if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, choose "Build Your Own Trip".` };
     const rate = tierRate(people), nights = days - 1;
     lines.push([`Package for ${people} ${people > 1 ? "adults" : "adult"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
+    if (nights > 0 && o.hotel === "none") {
+      // Travel only: the budget stay included in the package is taken off
+      const rooms = Math.max(1, parseInt(o.rooms, 10) || Math.ceil(people / 2));
+      const stay = PRICING.hotelsPerNight[PRICING.includedHotel];
+      lines.push([`No hotel needed (travel only): ${s(rooms, "room")} × ${s(nights, "night")} × ${inr(stay)} less`, -stay * rooms * nights]);
+    }
     if (nights > 0 && o.hotel !== "none") {
       const rooms = Math.max(1, parseInt(o.rooms, 10) || Math.ceil(people / 2));
       const up = hotelUpgrade(o.hotel);

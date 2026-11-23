@@ -30,7 +30,7 @@ function mountBooking(host, p) {
               const up = hotelUpgrade(k);
               return `<option value="${k}">${k === PRICING.includedHotel ? `${k} (included)` : isCustom ? k : `${k} (+${inr(up)} per room per night)`}</option>`;
             }).join("")}
-            <option value="none">No hotel needed (I have my own stay)</option>
+            <option value="none">No hotel needed, travel only${isCustom ? "" : ` (−${inr(base)} per room per night)`}</option>
           </select>
         </label>
         <label class="rooms-wrap">Rooms<input name="rooms" type="number" min="1" max="20" value="1"></label>
@@ -225,7 +225,7 @@ function mountBooking(host, p) {
       package: pkgLabel(p), date: f.date.value || "Not decided", days: `${o.days} ${unit}${o.days > 1 ? "s" : ""}`,
       people: String(o.people), children: String(num(f.kids, 0)),
       hotel: isPkg || isCustom ? (o.hotel === "none" ? "No hotel needed" : o.hotel) : "Not applicable",
-      rooms: isPkg && o.hotel !== "none" && o.days > 1 ? String(o.rooms) : "-",
+      rooms: isPkg && o.days > 1 ? (o.hotel === "none" ? "None (travel only)" : String(o.rooms)) : "-",
       addons: addonText(o) || "None",
       food: f.food ? f.food.value : "-",
       pickup: isDriver ? "-" : [o.punePickup ? "Pickup from Pune" : "Pickup in Wai", o.puneDrop ? "Drop to Pune" : "Drop in Wai"].join(", "),
