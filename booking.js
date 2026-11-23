@@ -9,19 +9,19 @@ function mountBooking(host, p) {
   const addons = addonsFor(p);
   const big = PRICING.addons.largeGroupFrom;
   // 2 and 3-day packages follow a fixed itinerary, so their days can't be changed.
-  // Ancient Wai is 1 or 2 days. 4 days or more = Build Your Own Trip.
+  // Ancient Wai is 1 or 2 days. Any other length = Build Your Own Trip (1 day upwards).
   const fixedDays = isPkg && p.id !== "ancient-wai";
   const minDays = fixedDays ? p.baseDays : (p.minDays || 1);
   const customLink = `<a href="${pkgPage(PACKAGES.find(x => x.kind === "custom"))}#book">Build Your Own Trip</a>`;
   const daysField = fixedDays
     ? `<label>Number of days<input name="days" type="number" value="${p.baseDays}" min="${p.baseDays}" max="${p.baseDays}" readonly class="fixed-days">
-        <span class="hint">This itinerary is for ${p.baseDays} days. Want 4 days or more? ${customLink}</span></label>`
+        <span class="hint">This itinerary is for ${p.baseDays} days. Want a different number of days? ${customLink}</span></label>`
     : isPkg
     ? `<label>Number of days<select name="days"><option value="1">1 day</option><option value="2">2 days</option></select>
-        <span class="hint">Want 4 days or more? ${customLink}</span></label>`
+        <span class="hint">Want more days? ${customLink}</span></label>`
     : isCustom
     ? `<label>Number of days<input name="days" type="number" min="${minDays}" max="30" value="${p.baseDays}">
-        <span class="hint">4 days or more. We make your itinerary and send it on email or WhatsApp.</span></label>`
+        <span class="hint">Any number of days. We make your itinerary and send it on email or WhatsApp.</span></label>`
     : `<label>${isVilla ? "Number of nights" : "Number of days"}<input name="days" type="number" min="${minDays}" max="15" value="${p.baseDays}"></label>`;
 
   host.innerHTML = `
@@ -42,9 +42,9 @@ function mountBooking(host, p) {
           <select name="hotel">
             ${Object.keys(PRICING.hotelsPerNight).map(k => {
               const up = hotelUpgrade(k);
-              return `<option value="${k}">${k === PRICING.includedHotel ? `${k} (included)` : isCustom ? k : `${k} (+${inr(up)} per room per night)`}</option>`;
+              return `<option value="${k}">${k === PRICING.includedHotel ? `${k} (included)` : `${k} (+${inr(up)} per room per night)`}</option>`;
             }).join("")}
-            <option value="none">No hotel needed, travel only${isCustom ? "" : ` (−${inr(base)} per room per night)`}</option>
+            <option value="none">No hotel needed, travel only (−${inr(base)} per room per night)</option>
           </select>
         </label>
         <label class="rooms-wrap">Rooms<input name="rooms" type="number" min="1" max="20" value="1"></label>
@@ -84,12 +84,12 @@ function mountBooking(host, p) {
       <label>Email (optional)<input name="email" type="email" autocomplete="email"></label>
       <label class="check-terms"><input type="checkbox" name="terms" required>
         <span>I have read and accept the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions, Code of Conduct and Cancellation Policy</a>.</span></label>
-      <button type="submit" class="btn">${isCustom ? "Send for a quote" : "Book now"}</button>
+      <button type="submit" class="btn">Book now</button>
       <p class="form-msg" role="status"></p>
     </form>
     <aside class="price-panel" aria-live="polite">
       <div class="price-box">
-        <h3>${isCustom ? "Custom trip" : "Your price"}</h3>
+        <h3>Your price</h3>
         <div class="pp-lines"></div>
         <p class="total">Total <b class="pp-total"></b></p>
         <p class="pay-split small" hidden></p>
@@ -171,24 +171,15 @@ function mountBooking(host, p) {
     renderDayPicks();
     const o = opts();
     if (num(f.kids, 0) > PRICING.children.maxFree) f.kids.value = PRICING.children.maxFree;
-    const nights = isPkg ? o.days - 1 : 0;
+    const nights = isPkg || isCustom ? o.days - 1 : 0;
     const rw = host.querySelector(".rooms-wrap");
-    if (rw) rw.hidden = isCustom || o.hotel === "none" || nights < 1;
+    if (rw) rw.hidden = o.hotel === "none" || nights < 1;
     const linesEl = panel.querySelector(".pp-lines"), notesEl = panel.querySelector(".box-notes");
     const totalEls = [panel.querySelector(".pp-total"), bar.querySelector(".pb-total")];
     linesEl.innerHTML = ""; notesEl.innerHTML = "";
     const note = t => { const el = document.createElement("p"); el.className = "small"; el.textContent = t; notesEl.appendChild(el); };
 
     panel.querySelector(".pay-split").hidden = true;
-    if (isCustom) {
-      totalEls.forEach(el => el.textContent = "On request");
-      note(`To confirm, pay ${PRICING.payment.bookingPercent}% of the quoted price as the booking amount. The full balance is paid before the trip starts.`);
-      note("Tell us your plan. Visit Wai will make a day-by-day itinerary for your trip and send it with the price on email or WhatsApp, usually within a few hours.");
-      if (PRICING.offer && PRICING.offer.active) note(`${inr(PRICING.offer.amount)} off is taken from your quoted price.`);
-      if (o.addons.length) note("Add-ons chosen: " + addonText(o));
-      if (o.punePickup || o.puneDrop) note(`Pune ${[o.punePickup && "pickup", o.puneDrop && "drop"].filter(Boolean).join(" and ")}: ${inr(punePrice(o))} is added to your quote.`);
-      return;
-    }
     const r = calcPrice(p, o);
     if (r.error) { totalEls.forEach(el => el.textContent = "–"); note(r.error); return; }
     const t = document.createElement("table"); t.className = "mini";
@@ -209,7 +200,8 @@ function mountBooking(host, p) {
     ps.hidden = false;
     ps.innerHTML = `Pay <b>${inr(r.booking)}</b> now to book (${PRICING.payment.bookingPercent}%). Pay the balance <b>${inr(r.balance)}</b> in full before the trip starts.`;
     r.notes.forEach(note);
-    if (isPkg && o.days === 1) note("1-day trip: no hotel stay.");
+    if (isCustom) note("Price at our standard rates. Visit Wai will make your day-by-day itinerary and send it on email or WhatsApp. If your plan needs anything extra, such as far-off places, we'll tell you before you pay.");
+    if ((isPkg || isCustom) && o.days === 1) note("1-day trip: no hotel stay.");
     if (num(f.kids, 0) > 0) note(`${num(f.kids, 0)} child${num(f.kids, 0) > 1 ? "ren" : ""} under ${PRICING.children.freeUnderAge}: free.`);
   }
 

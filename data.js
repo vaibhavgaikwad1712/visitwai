@@ -39,7 +39,7 @@ const PRICING = {
     largeGroupFrom: 6,
     photographer: { label: "Trip photographer (DSLR photos)", short: "Photographer", perDay: 1499, perDayLarge: 2999, pickDays: true },
     drone: { label: "Drone shots (up to 10 shots a day)", short: "Drone shots", perDay: 2499, perDayLarge: 4999, pickDays: true },
-    caretaker: { label: "Caretaker for elders", short: "Caretaker", perDay: 999, perDayLarge: 999, onlyFor: ["seniors-2", "seniors-3"] }
+    caretaker: { label: "Caretaker for elders", short: "Caretaker", perDay: 999, perDayLarge: 999, onlyFor: ["seniors-2", "seniors-3", "custom"] }
   },
   payment: { bookingPercent: 30 },     // booking amount to confirm; the full balance is paid before the trip starts
   pune: { oneWay: 3000, both: 5000 },  // Pune pickup OR drop only = oneWay; pickup AND drop = both
@@ -445,15 +445,16 @@ const PACKAGES = [
     ]
   },
   {
-    id: "custom", group: "other", category: "Custom", kind: "custom", baseDays: 4, minDays: 4,
-    name: "Build Your Own Trip (4 days or more)",
-    summary: "Want 4 days or more in the hills? Visit Wai plans a special itinerary just for you, different from our 2 and 3-day trips, and sends it with the price on email or WhatsApp.",
-    stay: "As you choose", walking: "As you choose", bestFor: "Trips of 4 days or more",
+    id: "custom", group: "other", category: "Custom", kind: "custom", baseDays: 2, minDays: 1,
+    name: "Build Your Own Trip",
+    summary: "1 day, 4 days or a whole week: choose your days, group, hotel and add-ons, see your price instantly at our standard rates, and Visit Wai plans a special itinerary just for you and sends it on email or WhatsApp.",
+    stay: "As you choose", walking: "As you choose", bestFor: "Any number of days, your own plan",
     points: [
-      "For trips of 4 days or more. Our 2 and 3-day packages have fixed itineraries",
+      "Any number of days, from 1 day upwards. Trips of 4 days or more are always planned this way",
       "Tell us your dates, group, hotel type, pace and any places you want to see",
       "Visit Wai makes a day-by-day itinerary specially for your trip",
-      "We send you the itinerary and price on email or WhatsApp, wherever your query reached us",
+      "Your price shows instantly at our standard rates: per day by group size, budget stay included",
+      "We send you the itinerary on email or WhatsApp, wherever your query reached us",
       "Add a photographer, drone shots, meals or Pune pickup and drop",
       "Birthdays, anniversaries, office outings and school trips welcome"
     ]
@@ -583,17 +584,14 @@ function includesFor(p) {
     yes: ["An experienced local driver for your own car", "No food charges for the driver, unless you choose to offer it"],
     no: ["Fuel, tolls and parking for your car", "Hotel stay and entry tickets", "Add-ons unless selected"]
   };
-  if (p.kind === "custom") return {
-    yes: ["A day-by-day itinerary made by Visit Wai for your trip of 4 days or more", "Itinerary and price sent to you on email or WhatsApp"],
-    no: ["Price is sent to you after we plan the trip"]
-  };
   const yes = [
+    ...(p.kind === "custom" ? ["A day-by-day itinerary made by Visit Wai for your trip, sent to you on email or WhatsApp"] : []),
     "AC car with an experienced local driver",
     "Fuel, tolls, parking and driver allowance",
     "Municipal tourist tax at Panchgani and Mahabaleshwar",
     "Entry tickets for viewpoints, temples and heritage sites on the itinerary"
   ];
-  if (p.baseDays > 1) yes.splice(1, 0, `Budget hotel stay included (worth ${inr(PRICING.hotelsPerNight[PRICING.includedHotel])} per room per night); upgrade to 2–5 star if you like`);
+  if (p.baseDays > 1) yes.splice(p.kind === "custom" ? 2 : 1, 0, `Budget hotel stay included (worth ${inr(PRICING.hotelsPerNight[PRICING.includedHotel])} per room per night); upgrade to 2–5 star if you like`);
   if (p.id === "ancient-wai") yes.push("Local history guide on Day 1");
   yes.push("Pickup and drop in Wai", puneLine());
   const no = ["Boating, rides, paragliding and amusement parks", "Meals, unless you choose them", "Photographer, drone" + (p.category === "Seniors" ? ", caretaker" : "") + " unless selected", "Camera fees, shopping and tips"];
@@ -632,7 +630,7 @@ function dayList(ds) {
   return "Day " + (ds.length > 1 ? ds.slice(0, -1).join(", ") + " & " + ds[ds.length - 1] : ds[0]);
 }
 function calcPrice(p, o) {
-  if (!p || p.kind === "custom") return null;
+  if (!p) return null;
   const days = Math.max(1, parseInt(o.days, 10) || p.baseDays || 1);
   const people = Math.max(1, parseInt(o.people, 10) || 2);
   const s = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
@@ -647,7 +645,7 @@ function calcPrice(p, o) {
   } else {
     if (people > PRICING.maxPeople) return { error: `Packages are for up to ${PRICING.maxPeople} people. For bigger groups, message us on WhatsApp and we'll plan it with you.` };
     const rate = tierRate(people), nights = days - 1;
-    lines.push([`Package for ${people} ${people > 1 ? "adults" : "adult"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
+    lines.push([`${p.kind === "custom" ? "Custom trip" : "Package"} for ${people} ${people > 1 ? "adults" : "adult"}: ${s(days, "day")} × ${inr(rate)}`, rate * days]);
     if (nights > 0 && o.hotel === "none") {
       // Travel only: the budget stay included in the package is taken off
       const rooms = Math.max(1, parseInt(o.rooms, 10) || Math.ceil(people / 2));
@@ -688,7 +686,6 @@ function calcPrice(p, o) {
   return { days, lines, notes, subtotal, discount, rounding: 0, total, booking, balance: total - booking };
 }
 function fromPrice(p) {
-  if (p.kind === "custom") return "Price on request";
   if (p.kind === "driver") return `${inr(PRICING.driverOnlyPerDay)} / day`;
   if (p.kind === "villa") {
     const off = PRICING.offer && PRICING.offer.active ? PRICING.offer.amount : 0;

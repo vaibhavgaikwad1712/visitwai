@@ -230,7 +230,7 @@
         <dl><dt>Stay</dt><dd class="s"></dd><dt>Walking</dt><dd class="w"></dd></dl>
         <p class="price-tag"></p>
         <div class="card-actions">
-          <a class="btn small-btn" href="${pkgPage(p)}#book">${p.kind === 'custom' ? 'Get a quote' : 'Book now'}</a>
+          <a class="btn small-btn" href="${pkgPage(p)}#book">Book now</a>
           <a class="btn ghost small-btn" href="${pkgPage(p)}">${p.kind ? 'Details' : 'See the plan'}</a>
         </div>`;
       a.querySelector('.who').textContent = g === 'other' ? ({ villa: 'Pool villa', driver: 'Driver only', custom: 'Custom trip' }[p.kind]) : g === 'special' ? 'Special package' : `For ${p.category.toLowerCase()}`;

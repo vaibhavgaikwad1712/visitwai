@@ -452,7 +452,7 @@ footer a:hover{color:var(--berry)}
 .hero h1{font-size:clamp(2.8rem,7vw,5.4rem);max-width:13ch;line-height:1.02}
 .hero.page-hero h1{font-size:clamp(2.4rem,5.5vw,4.2rem)}
 .hero{background-position:0 0,center,center 58%,0 0}
-.row{align-items:end}
+.row{align-items:start}
 @media (max-width:560px){
   .offer-inner{flex-wrap:nowrap;padding-top:.45rem;padding-bottom:.45rem}
   .offer-txt{display:none}

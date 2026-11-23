@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <h1>${esc(p.name)}</h1>
       <p>${esc(p.summary)}</p>
       <p class="hero-price">${esc(fromPrice(p))}</p>
-      <div class="actions"><a class="btn" href="#book">${p.kind === "custom" ? "Get a quote" : "Book now"}</a>${days ? '<a class="btn ghost" href="#plan">See the plan</a>' : ""}</div>
+      <div class="actions"><a class="btn" href="#book">Book now</a>${days ? '<a class="btn ghost" href="#plan">See the plan</a>' : ""}</div>
     </div>
   </section>
   <section style="padding:3rem 0 2rem">
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </section>
   <section id="book" class="alt">
     <div class="wrap">
-      <h2>${p.kind === "custom" ? "Ask for a quote" : "Book this trip"}</h2>
+      <h2>${p.kind === "custom" ? "Plan and book your trip" : "Book this trip"}</h2>
       <p class="lede">Choose your dates, group and add-ons. Your price updates as you go. We'll call you to confirm availability. Pay ${PRICING.payment.bookingPercent}% as the booking amount to confirm, and the full balance before the trip starts.</p>
       <div id="bookHost"></div>
     </div>
